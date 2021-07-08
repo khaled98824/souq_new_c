@@ -13,6 +13,8 @@ import 'package:photo_view/photo_view_gallery.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:souqalfurat/providers/ads_provider.dart';
+import 'package:souqalfurat/widgets/chat/messages.dart';
+import 'package:souqalfurat/widgets/chat/new_message.dart';
 
 //import 'package:sooq1alzour/ui/Report.dart';
 //import 'package:sooq1alzour/ui/private_chat.dart';
@@ -139,12 +141,6 @@ class _ShowAdState extends State<ShowAd> {
   @override
   Widget build(BuildContext context) {
     var ads = Provider.of<Products>(context).findById(adId);
-
-    Timer(Duration(milliseconds: 500), () {
-      setState(() {
-        showSlider = false;
-      });
-    });
     return SafeArea(
       child: Scaffold(
           appBar: AppBar(
@@ -392,17 +388,20 @@ class _ShowAdState extends State<ShowAd> {
                                   textAlign: TextAlign.center,
                                   style:Theme.of(context).textTheme.headline3
                                 ),
+
                               ],
                             )),
                       ),
                     ),
-                    SizedBox(
-                      height: 88,
-                    ),
 
+                    SizedBox(
+                        height: MediaQuery.of(context).size.height/2,
+                        child: Messages(adId)),
+                    NewMessage(adId),
                   ],
                 ),
               ),
+
             ],
           )),
     );

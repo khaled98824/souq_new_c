@@ -9,7 +9,7 @@ class SerchData extends SearchDelegate<String>{
   String category ;
   SerchData({ this.category});
   Future<List<DocumentSnapshot>> _future() async{
-   QuerySnapshot querySnapshot= await Firestore.instance.collection("Ads").where('category',isEqualTo: category).getDocuments();
+   QuerySnapshot querySnapshot= await Firestore.instance.collection("Ads").getDocuments();
    final List<DocumentSnapshot> snap = querySnapshot.documents.where((DocumentSnapshot documentSnapshot) => documentSnapshot["name"].toString().toLowerCase().contains(query.toLowerCase())||documentSnapshot["category"].toString().toLowerCase().contains(query.toLowerCase())).toList();
    return snap;
   }

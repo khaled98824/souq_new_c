@@ -1460,7 +1460,7 @@ class _AddNewAdState extends State<AddNewAd> {
                                   final isValid =
                                       _formkey.currentState.validate();
                                   _formkey.currentState.save();
-
+                                  FocusScope.of(context).unfocus();
                                   _editedProduct = Product(
                                     time: DateFormat('yyyy-MM-dd-HH:mm').format(DateTime.now()),
                                     creatorName: creatorName,

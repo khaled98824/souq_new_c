@@ -73,7 +73,7 @@ class Products with ChangeNotifier {
           ),
         );
       });
-      allItems=_items;
+      allItems=loadedProducts;
       final Iterable<Product> aList =
           loadedProducts.where((element) => element.creatorId == userId);
       _items = aList.toList();
