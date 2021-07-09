@@ -1,3 +1,4 @@
+// @dart=2.9
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -7,8 +8,11 @@ import 'package:souqalfurat/providers/auth.dart';
 
 class NewMessage extends StatefulWidget {
   final String adId;
+  final String userId;
+  final String creatorId;
+  final bool isPrivate;
 
-  const NewMessage(this.adId);
+   NewMessage(this.adId,this.isPrivate,this.userId,this.creatorId);
   @override
   _NewMessageState createState() => _NewMessageState();
 }
@@ -24,7 +28,7 @@ class _NewMessageState extends State<NewMessage> {
         .collection('users')
         .document(userId)
         .get();
-    Firestore.instance.collection('chat').document(adId).collection(adId).add({
+    Firestore.instance.collection('chat').document(chatName).collection(chatName).add({
       'adId':widget.adId,
       'text': _enteredMessage,
       'createdAt': Timestamp.now(),
@@ -36,11 +40,42 @@ class _NewMessageState extends State<NewMessage> {
     setState(() {
       _enteredMessage = '';
     });
-  }
+    createPrivateChat(userData['name'],userId);
 
+  }
+createPrivateChat(userName,userId){
+  Firestore.instance.collection('private_chats').document(chatName).collection(chatName).add({
+    'chatId':chatName,
+    'adId':widget.adId,
+    'createdAt': Timestamp.now(),
+    'userName': userName,
+    'userId': userId,
+
+  });
+}
+  String chatName;
+  void privateOrG(userIdA){
+
+    if(widget.isPrivate){
+      print('adId ${widget.adId}');
+      print('userId from messages $userIdA');
+      print('crId ${widget.creatorId}');
+      print('isP ${widget.isPrivate}');
+
+
+      chatName=widget.adId;
+      chatName = userIdA.toString()+widget.adId+widget.creatorId;
+      print('chatName $chatName');
+    }else{
+      chatName=widget.adId;
+    }
+  }
   @override
   Widget build(BuildContext context) {
-    final userId= Provider.of<Auth>(context).userId;
+
+    final userIdG= Provider.of<Auth>(context).userId;
+    privateOrG(userIdG);
+
     return Container(
       margin: EdgeInsets.only(top: 8),
       padding: EdgeInsets.all(8),
@@ -68,7 +103,7 @@ class _NewMessageState extends State<NewMessage> {
           IconButton(
             color: Theme.of(context).primaryColor,
             onPressed: () {
-              _enteredMessage.trim().isEmpty ? null : _sendMessage(userId,widget.adId);
+              _enteredMessage.trim().isEmpty ? null : _sendMessage(userIdG,widget.adId);
             },
             icon: Icon(Icons.send),
           )

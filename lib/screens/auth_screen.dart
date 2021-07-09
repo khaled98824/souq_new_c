@@ -5,23 +5,20 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 import 'dart:ui';
+import 'package:image_picker/image_picker.dart';
 
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:souqalfurat/widgets/chat/pickers/user_image_picker.dart';
 import '../providers/auth.dart';
 import '../models/http_exception.dart';
 
+
+File imageFile;
 class AuthScreen extends StatelessWidget {
   static const routeName = '/auth-screen';
-  File _userImageFile;
   String imageUrl;
-  void _packedImage(File packedImage)async{
-    _userImageFile = packedImage;
-
-  }
   @override
   Widget build(BuildContext context) {
     final devicesize = MediaQuery.of(context).size;
@@ -162,8 +159,8 @@ class _AuthCardState extends State<AuthCard>
   }
 
   Future<void> _submit() async {
-    if(_authMode==AuthMode.SignUp && userImageFile ==null){
-      Scaffold.of(context).showSnackBar(SnackBar(content: Text('Please pick an image'),));
+    if(_authMode==AuthMode.SignUp && imageFile ==null){
+      Scaffold.of(context).showSnackBar(SnackBar(content: Text('رجائاَ اختر صورة شخصية'),));
       return;}
 
     print('sup1');
@@ -190,6 +187,7 @@ class _AuthCardState extends State<AuthCard>
         _authData['password'],
         _authData['name'],
         _authData['area'],
+        imageUrl
 
       );
     } on HttpException catch (error) {
@@ -267,8 +265,8 @@ class _AuthCardState extends State<AuthCard>
         curve: Curves.easeIn,
         height: _authMode == AuthMode.SignUp ? 530 : 340,
         constraints: BoxConstraints(
-          minHeight: _authMode == AuthMode.SignUp ? 541 : 260,
-          maxHeight: _authMode == AuthMode.SignUp ? 552 : 260,
+          minHeight: _authMode == AuthMode.SignUp ? 541 : 270,
+          maxHeight: _authMode == AuthMode.SignUp ? 552 : 280,
         ),
         width: devicesize.width * 0.75,
         padding: EdgeInsets.only(top: 5, right: 20, left: 20),
@@ -276,7 +274,7 @@ class _AuthCardState extends State<AuthCard>
           key: _formlKey,
           child: Column(
             children: [
-              if(_authMode ==AuthMode.SignUp)Center(child: UserImagePicker(_packedImage)),
+              if(_authMode ==AuthMode.SignUp)Center(child: UserImagePicker()),
               TextFormField(
                   decoration: InputDecoration(labelText: 'E-mail'),
                   controller: _emailController,
@@ -424,6 +422,65 @@ class _AuthCardState extends State<AuthCard>
           ),
         ),
       ),
+    );
+  }
+}
+String imageUrl;
+File _pickedImage;
+class UserImagePicker extends StatefulWidget {
+  @override
+  _UserImagePickerState createState() => _UserImagePickerState();
+}
+
+class _UserImagePickerState extends State<UserImagePicker> {
+
+  final ImagePicker _picker = ImagePicker();
+
+  void _pickImage(ImageSource src) async {
+    final pickedImageFile = await _picker.getImage(source: src,imageQuality: 100,maxWidth: 100,maxHeight: 150);
+
+    if (pickedImageFile != null) {
+      setState(() {
+        imageFile = _pickedImage;
+        _pickedImage = File(pickedImageFile.path);
+      });
+
+      final ref = FirebaseStorage.instance
+          .ref()
+          .child('user_image')
+          .child('userId' +'.jpg');
+      await ref.putFile(_pickedImage);
+      imageUrl = await ref.getDownloadURL();
+
+     print(imageUrl);
+    }else{
+      print('no image selected');
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: <Widget>[
+        CircleAvatar(radius: 40,
+          backgroundColor: Colors.grey,
+          backgroundImage: _pickedImage != null ?FileImage(_pickedImage):null,
+
+        ),
+        SizedBox(height: 10,),
+
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            FlatButton.icon(onPressed: ()=>_pickImage(ImageSource.gallery),
+              textColor: Theme.of(context).primaryColor,
+              icon: Icon(Icons.image_outlined,size: 33,),
+              label: Text('Add Image \nFrom Gallery',textAlign: TextAlign.center,style: TextStyle(fontSize: 14),),
+            ),
+
+          ],
+        )
+      ],
     );
   }
 }

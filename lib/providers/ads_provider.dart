@@ -191,7 +191,7 @@ class Products with ChangeNotifier {
   Future<void> fetchNewAds([bool filterByUser = false]) async {
     final filteredString =
         filterByUser ? '?orderBy="creatorId"equalTo="$userId' : '';
-    print('userId $userId');
+    print('userId from fetch new ad $userId');
     var url = 'https://souq-alfurat-89023.firebaseio.com/products.json';
     try {
       final res = await http.get(Uri.parse(url));

@@ -97,13 +97,9 @@ class _ProfileState extends State<Profile> {
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: <Widget>[
                                     CircleAvatar(
-                                      backgroundColor: Colors.red,
+                                      backgroundImage:NetworkImage(value.imageUserUrl),
                                       radius: 27,
-                                      child: Icon(
-                                        Icons.perm_identity,
-                                        size: 35,
-                                        color: Colors.white,
-                                      ),
+
                                     ),
                                     SizedBox(
                                       width: 12,

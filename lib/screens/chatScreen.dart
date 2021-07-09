@@ -9,6 +9,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class ChatScreen extends StatefulWidget {
+  final String adId;
+  final String userId;
+  final String creatorId;
+  final bool isPrivate;
+
+
+  const ChatScreen( this.adId,this.isPrivate,this.userId,this.creatorId) ;
   @override
   _ChatScreenState createState() => _ChatScreenState();
 }
@@ -35,6 +42,7 @@ class _ChatScreenState extends State<ChatScreen> {
     //   }
     // );
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -71,8 +79,8 @@ class _ChatScreenState extends State<ChatScreen> {
       body:Container(
         child: Column(
           children: [
-           // Expanded(child: Messages()),
-            //NewMessage(),
+            Expanded(child: Messages(widget.adId,widget.isPrivate,widget.userId,widget.creatorId)),
+            NewMessage(widget.adId,widget.isPrivate,widget.userId,widget.creatorId),
           ],
         ),
       ),

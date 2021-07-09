@@ -17,12 +17,10 @@ class _NewAdsItemsState extends State<NewAdsItems> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    Provider.of<Products>(context, listen: false).fetchNewAds();
   }
 
   @override
   Widget build(BuildContext context) {
-    final getData = Provider.of<Products>(context, listen: false).fetchNewAds();
     final getAllData =
         Provider.of<Products>(context, listen: false).fetchAndSetProducts();
 
@@ -98,9 +96,9 @@ class NewAdsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var ads = Provider.of<Products>(context);
-    var getAll = Provider.of<Products>(context).fetchAndSetProducts(false);
-    var getNew = Provider.of<Products>(context).fetchNewAds(false);
+    var ads = Provider.of<Products>(context,listen: false);
+    var getAll = Provider.of<Products>(context,listen: false).fetchAndSetProducts(false);
+    var getNew = Provider.of<Products>(context,listen: false).fetchNewAds(false);
 
     Size size = MediaQuery.of(context).size;
     bool isLike;

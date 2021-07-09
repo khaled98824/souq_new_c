@@ -72,7 +72,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final screenSizeWidth = MediaQuery.of(context).size.width;
-    final fullDataP = Provider.of<FullDataProvider>(context);
+    final fullDataP = Provider.of<FullDataProvider>(context,listen: false);
     return Scaffold(
       backgroundColor: kBackgroundColor,
       body: SafeArea(

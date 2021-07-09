@@ -1,6 +1,10 @@
 // @dart=2.9
 
+
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:souqalfurat/screens/auth_screen.dart';
@@ -19,7 +23,7 @@ class Auth with ChangeNotifier {
   String nameUser;
   String areaUser;
   String dateUser;
-
+  String imageUserUrl;
   bool get isAuth {
     return _token != null;
   }
@@ -38,7 +42,7 @@ class Auth with ChangeNotifier {
   }
 
   Future<void> _authenticate(
-      [String email, String password, String urlSegment , String name , String area ,bool signUp]) async {
+      [String email, String password, String urlSegment , String name , String area ,bool signUp ,String imageUrl]) async {
     final url =
         'https://identitytoolkit.googleapis.com/v1/accounts:$urlSegment?key=AIzaSyBMhYCade8T5qN9HQoFINqPaXHbBX4-aNk';
     try {
@@ -80,8 +84,6 @@ class Auth with ChangeNotifier {
         'expiryDate': _expiryDate.toIso8601String(),
       });
       prefs.setString('userData', userData);
-      //save user info in firebase users
-
         if(signUp)Firestore.instance.collection('users').document(_userId)
             .setData({
           'token':_token,
@@ -92,6 +94,7 @@ class Auth with ChangeNotifier {
           'password': password,
           "time": DateFormat('yyyy-MM-dd-HH:mm')
               .format(DateTime.now()),
+          'imageUrl': imageUrl,
         });
 
     } catch (e) {
@@ -99,9 +102,9 @@ class Auth with ChangeNotifier {
     }
   }
 
-  Future<void> signUp(String email, String password, String name, String area) async {
+  Future<void> signUp(String email, String password, String name, String area ,String imageUrl) async {
     print('SignUp');
-    return _authenticate(email, password, 'signUp',name,area,true);
+    return _authenticate(email, password, 'signUp',name,area,true ,imageUrl);
   }
 
   Future<void> logIn(String email, String password) async {
@@ -116,6 +119,7 @@ class Auth with ChangeNotifier {
       nameUser = documentsUser['name'];
       areaUser = documentsUser['area'];
       dateUser = documentsUser['time'];
+      imageUserUrl =documentsUser['imageUrl'];
     notifyListeners();
     return documentsUser;
   }
