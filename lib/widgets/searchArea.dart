@@ -23,8 +23,11 @@ class _SearchAreaDesignState extends State<SearchAreaDesign> {
           child: Stack(
             alignment: Alignment(0.3, 0),
             children: <Widget>[
-              Text('!... إبحث في سوق الفرات',
-                  style: Theme.of(context).textTheme.headline5),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: Text('!... إبحث في سوق الفرات',
+                    style: Theme.of(context).textTheme.headline3),
+              ),
               Align(
                   alignment: Alignment(0.9, 0),
                   child: Icon(

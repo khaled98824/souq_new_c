@@ -15,6 +15,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:souqalfurat/providers/ads_provider.dart';
 import 'package:souqalfurat/providers/auth.dart';
+import 'package:souqalfurat/providers/chats_provider.dart';
 import 'package:souqalfurat/screens/chatScreen.dart';
 import 'package:souqalfurat/widgets/chat/messages.dart';
 import 'package:souqalfurat/widgets/chat/new_message.dart';
@@ -141,11 +142,15 @@ class _ShowAdState extends State<ShowAd> {
   @override
   Widget build(BuildContext context) {
     var ads = Provider.of<Products>(context, listen: false).findById(adId);
-    final userId = Provider.of<Auth>(context,listen: false).uid2;
+    final userId = Provider.of<Auth>(context, listen: false).uid2;
+    final userId2 = Provider.of<Auth>(context, listen: false).userId;
+    final String chatName = userId2 + adId + ads['creatorId'];
+    final List imagesUrl = ads['imagesUrl'];
     return SafeArea(
       child: Scaffold(
           appBar: AppBar(
-            title: Text(ads.name, style: Theme.of(context).textTheme.headline4),
+            title:
+                Text(ads['name'], style: Theme.of(context).textTheme.headline4),
             centerTitle: true,
           ),
           body: Column(
@@ -159,30 +164,28 @@ class _ShowAdState extends State<ShowAd> {
                     ),
                     Consumer<Products>(
                         builder: (ctx, data, _) => CarouselSlider(
-                              items: ads.imagesUrl.map((url) {
-                                return Builder(builder: (BuildContext context) {
-                                  return InkWell(
+                              items: imagesUrl.map((url){
+                                return Builder(builder: (BuildContext context){
+                                  return  InkWell(
                                     onTap: () {
                                       Navigator.push(
                                           context,
                                           MaterialPageRoute(
                                               builder: (context) => PageImage(
-                                                    ads.imagesUrl[
-                                                        imageUrl4Show],
-                                                  )));
+                                                url,
+                                              )));
                                     },
                                     child: Container(
                                       child: Hero(
-                                          tag: Text('imageAd'),
+                                          tag: Text('imageAd2'),
                                           child: ClipRRect(
                                             borderRadius:
-                                                BorderRadius.circular(17),
+                                            BorderRadius.circular(17),
                                             child: Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 10),
+                                              padding: const EdgeInsets.symmetric(
+                                                  horizontal: 10),
                                               child: Image.network(
-                                                url,
+                                                ads['imagesUrl'][imageUrl4Show],
                                                 fit: BoxFit.cover,
                                               ),
                                             ),
@@ -248,7 +251,11 @@ class _ShowAdState extends State<ShowAd> {
                         ),
                         InkWell(
                           onTap: () {
-                            Navigator.push(context, MaterialPageRoute(builder: (context)=>ChatScreen(adId,true,userId,ads.creatorId)));
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => ChatScreen(
+                                        adId, true, userId, ads['creatorId'])));
                           },
                           child: Container(
                             width: 150,
@@ -276,7 +283,7 @@ class _ShowAdState extends State<ShowAd> {
                         ),
                         InkWell(
                           onTap: () {
-                            launch('tel:${ads.phone}');
+                            launch('tel:${ads['phone']}');
                           },
                           child: Container(
                             width: 90,
@@ -306,17 +313,17 @@ class _ShowAdState extends State<ShowAd> {
                     ),
                     Padding(
                         padding: EdgeInsets.only(top: 12, bottom: 4, right: 10),
-                        child: Text(ads.creatorName,
+                        child: Text(ads['creatorName'],
                             textAlign: TextAlign.right,
                             style: Theme.of(context).textTheme.headline5)),
                     Padding(
                         padding: EdgeInsets.only(top: 0, bottom: 4, right: 10),
-                        child: Text(ads.area,
+                        child: Text(ads['area'],
                             textAlign: TextAlign.right,
                             style: Theme.of(context).textTheme.headline3)),
                     Padding(
                         padding: EdgeInsets.only(top: 4, bottom: 5, right: 10),
-                        child: Text(ads.time,
+                        child: Text(ads['date'],
                             textAlign: TextAlign.right,
                             style: Theme.of(context).textTheme.headline3)),
                     Container(
@@ -339,11 +346,11 @@ class _ShowAdState extends State<ShowAd> {
                     SizedBox(
                       height: 5,
                     ),
-                    info(ads.category, () {}, 'القسم الرئيسي'),
-                    info(ads.department, () {}, 'القسم الفرعي'),
-                    info(ads.description, () {}, '  الحالة'),
-                    info(ads.status, () {}, 'الوصف'),
-                    info(ads.id, () {}, '    Id'),
+                    info(ads['category'], () {}, 'القسم الرئيسي'),
+                    info(ads['department'], () {}, 'القسم الفرعي'),
+                    info(ads['status'], () {}, 'الحالة'),
+                    info(ads['description'], () {}, 'الوصف'),
+                    info(ads.documentID, () {}, '    Id'),
                     Center(
                       child: InkWell(
                         onTap: () {
@@ -364,7 +371,9 @@ class _ShowAdState extends State<ShowAd> {
                         )),
                       ),
                     ),
-                    SizedBox(height: 5,),
+                    SizedBox(
+                      height: 5,
+                    ),
                     Container(
                       width: MediaQuery.of(context).size.width - 6,
                       height: 5,
@@ -379,23 +388,34 @@ class _ShowAdState extends State<ShowAd> {
                         height: MediaQuery.of(context).size.height - 300,
                         child: Stack(
                           children: [
-                            Messages(adId,false,Provider.of<Auth>(context,listen: true).userId,ads.creatorId),
+                            Messages(
+                                adId,
+                                false,
+                                Provider.of<Auth>(context, listen: true).userId,
+                                ads['creatorId']),
                             Positioned(
-                              top: MediaQuery.of(context).size.height/2+37,
-                                left: MediaQuery.of(context).size.width/2-20,
+                                top:
+                                    MediaQuery.of(context).size.height / 2 + 37,
+                                left:
+                                    MediaQuery.of(context).size.width / 2 - 20,
                                 child: IconButton(
-                              onPressed: () {
-
-                                scrollController.animateTo(
-                                    scrollController.position.minScrollExtent,
-                                    duration: const Duration(milliseconds: 300),
-                                    curve: Curves.easeOut);
-                              },
-                              icon: Icon(FontAwesomeIcons.angleDoubleUp,color: Colors.deepOrange.withOpacity(0.5),size: 30,),
-                            ))
+                                  onPressed: () {
+                                    scrollController.animateTo(
+                                        scrollController
+                                            .position.minScrollExtent,
+                                        duration:
+                                            const Duration(milliseconds: 300),
+                                        curve: Curves.easeOut);
+                                  },
+                                  icon: Icon(
+                                    FontAwesomeIcons.angleDoubleUp,
+                                    color: Colors.deepOrange.withOpacity(0.5),
+                                    size: 30,
+                                  ),
+                                ))
                           ],
                         )),
-                    NewMessage(adId,false,userId,ads.creatorId),
+                    NewMessage(adId, false, userId, ads['creatorId']),
                   ],
                 ),
               ),
@@ -427,7 +447,7 @@ class _ShowAdState extends State<ShowAd> {
                 Padding(
                   padding: const EdgeInsets.only(bottom: 4, top: 4),
                   child: Text(
-                    value,
+                    value.toString(),
                     style: Theme.of(context).textTheme.headline3,
                     textAlign: TextAlign.center,
                   ),
@@ -483,14 +503,10 @@ class _PageImageState extends State<PageImage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
+          centerTitle: true,
           title: Text(
             'الصورة',
-            style: TextStyle(
-              fontSize: 30,
-              fontFamily: 'AmiriQuran',
-              height: 1,
-              color: Colors.white,
-            ),
+            style:Theme.of(context).textTheme.headline4,
           ),
         ),
         body: Stack(
@@ -513,31 +529,7 @@ class _PageImageState extends State<PageImage> {
                 //loadingChild: CircularProgressIndicator(),
               ),
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Padding(
-                    padding: EdgeInsets.symmetric(vertical: 12, horizontal: 22),
-                    child: Icon(
-                      Icons.arrow_back_ios,
-                      size: 28,
-                      color: Colors.blue,
-                    )),
-                Text(
-                  'عدد الصور  ',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 18),
-                ),
-                Padding(
-                    padding: EdgeInsets.symmetric(vertical: 12, horizontal: 22),
-                    child: Icon(
-                      Icons.arrow_forward_ios,
-                      size: 28,
-                      color: Colors.blue,
-                    )),
-              ],
-            ),
+
           ],
         ));
   }

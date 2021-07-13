@@ -53,25 +53,7 @@ String imageUrl6;
 String imageUrl7;
 int phone;
 
-var _editedProduct = Product(
-  time: '',
-  creatorName: '',
-  id: '',
-  name: '',
-  description: '',
-  price: 0.0,
-  imagesUrl: ['', ''],
-  area: '',
-  category: '',
-  department: '',
-  status: '',
-  isFavorite: false,
-  uid: '',
-  likes: 0,
-  views: 0,
-  phone: 0,
-  isRequest: false,
-);
+var _editedProduct ;
 var _initialValues = {
   "date":'',
   "name": '',
@@ -300,7 +282,7 @@ class _AddNewAdState extends State<AddNewAd> {
   File _image;
 
   Future getImage(context) async {
-    imageG = await ImagePicker.pickImage(source: ImageSource.gallery);
+    imageG = await ImagePicker.pickImage(source: ImageSource.gallery,imageQuality: 100,maxWidth: 500,maxHeight: 750);
     setState(() {
       _image = imageG;
     });

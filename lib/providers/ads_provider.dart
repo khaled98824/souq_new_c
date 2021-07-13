@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
@@ -12,7 +13,7 @@ import '../models/ads_model.dart';
 
 class Products with ChangeNotifier {
   List<Product> _items = [];
-  List<Product> newItems = [];
+  List<DocumentSnapshot> newItems = [];
   List<Product> allItems = [];
 
 
@@ -35,13 +36,11 @@ class Products with ChangeNotifier {
     return _items.where((prodItem) => prodItem.isFavorite).toList();
   }
 
-  Product findById(String id) {
-    return allItems.firstWhere((prod) => prod.id == id);
+   DocumentSnapshot findById(String id) {
+    return newItems.firstWhere((prod) => prod.documentID == id);
   }
 
   Future<void> fetchAndSetProducts([bool filterByUser = false]) async {
-    final filteredString =
-        filterByUser ? '?orderBy="creatorId"equalTo="$userId' : '';
     var url = 'https://souq-alfurat-89023.firebaseio.com/products.json';
     try {
       final res = await http.get(Uri.parse(url));
@@ -84,71 +83,121 @@ class Products with ChangeNotifier {
   }
 
   Future<void> addProduct(Product product) async {
-    print('id = ${product.id}');
-    final url = 'https://souq-alfurat-89023.firebaseio.com/products.json';
+    //add by firesrore
+    Firestore.instance.collection('Ads2').add({
+              'date':product.time,
+              'creatorName':product.creatorName,
+              'name': product.name,
+              'description': product.description,
+              'price': product.price,
+              'creatorId': userId,
+              'area': product.area,
+              'phone': product.phone,
+              'status': product.status,
+              'deviceNo': product.deviceNo,
+              'category': product.category,
+              'uid': product.uid,
+              'department': product.department,
+              'imagesUrl': product.imagesUrl,
+              'isFavorite': product.isFavorite,
+              'isRequest': product.isRequest,
+              'views': product.views,
+              'likes': product.likes,
 
-    try {
-      final res = await http.post(Uri.parse(url),
-          body: json.encode({
-            'date':product.time,
-            'creatorName':product.creatorName,
-            'name': product.name,
-            'description': product.description,
-            'price': product.price,
-            'creatorId': userId,
-            'area': product.area,
-            'phone': product.phone,
-            'status': product.status,
-            'deviceNo': product.deviceNo,
-            'category': product.category,
-            'uid': product.uid,
-            'department': product.department,
-            'imagesUrl': product.imagesUrl,
-            'isFavorite': product.isFavorite,
-            'isRequest': product.isRequest,
-            'views': product.views,
-            'likes': product.likes,
-          }));
-      final newProduct = Product(
-        id: json.decode(res.body)['name'],
-        name: product.name,
-        description: product.description,
-        imagesUrl: product.imagesUrl,
-        price: product.price,
-      );
+    });
 
-      _items.add(newProduct);
-      notifyListeners();
-    } catch (e) {
-      throw e;
-    }
+    //add by api
+    // final url = 'https://souq-alfurat-89023.firebaseio.com/products.json';
+    // try {
+    //   final res = await http.post(Uri.parse(url),
+    //       body: json.encode({
+    //         'date':product.time,
+    //         'creatorName':product.creatorName,
+    //         'name': product.name,
+    //         'description': product.description,
+    //         'price': product.price,
+    //         'creatorId': userId,
+    //         'area': product.area,
+    //         'phone': product.phone,
+    //         'status': product.status,
+    //         'deviceNo': product.deviceNo,
+    //         'category': product.category,
+    //         'uid': product.uid,
+    //         'department': product.department,
+    //         'imagesUrl': product.imagesUrl,
+    //         'isFavorite': product.isFavorite,
+    //         'isRequest': product.isRequest,
+    //         'views': product.views,
+    //         'likes': product.likes,
+    //       }));
+    //   final newProduct = Product(
+    //     id: json.decode(res.body)['name'],
+    //     name: product.name,
+    //     description: product.description,
+    //     imagesUrl: product.imagesUrl,
+    //     price: product.price,
+    //   );
+    //
+    //   _items.add(newProduct);
+    //   notifyListeners();
+    // } catch (e) {
+    //   throw e;
+    // }
   }
 
   Future<void> updateProduct(String id, Product newProduct) async {
     final prodIndex = _items.indexWhere((prod) => prod.id == id);
+
+
     if (prodIndex >= 0) {
-      final url = 'https://souq-alfurat-89023.firebaseio.com/products/$id.json';
-      await http.patch(Uri.parse(url),
-          body: json.encode({
-            'date':newProduct.time,
-            'updateDate':DateFormat('yyyy-MM-dd-HH:mm').format(DateTime.now()),
-            'name': newProduct.name,
-            'description': newProduct.description,
-            'price': newProduct.price,
-            'creatorId': userId,
-            'area': newProduct.area,
-            'phone': newProduct.phone,
-            'status': newProduct.status,
-            'deviceNo': newProduct.deviceNo,
-            'category': newProduct.category,
-            'uid': newProduct.uid,
-            'department': newProduct.department,
-            'imagesUrl': newProduct.imagesUrl,
-            'isFavorite': newProduct.isFavorite,
-            'isRequest': newProduct.isRequest,
-            'views': newProduct.views,
-            'likes': newProduct.likes,
-          }));
+      //update by firestor
+      Firestore.instance.collection('Ads2').document(id).updateData({
+              'date':newProduct.time,
+              'updateDate':DateFormat('yyyy-MM-dd-HH:mm').format(DateTime.now()),
+              'name': newProduct.name,
+              'description': newProduct.description,
+              'price': newProduct.price,
+              'creatorId': userId,
+              'area': newProduct.area,
+              'phone': newProduct.phone,
+              'status': newProduct.status,
+              'deviceNo': newProduct.deviceNo,
+              'category': newProduct.category,
+              'uid': newProduct.uid,
+              'department': newProduct.department,
+              'imagesUrl': newProduct.imagesUrl,
+              'isFavorite': newProduct.isFavorite,
+              'isRequest': newProduct.isRequest,
+              'views': newProduct.views,
+              'likes': newProduct.likes,
+
+      });
+
+
+      //update by api
+
+      // final url = 'https://souq-alfurat-89023.firebaseio.com/products/$id.json';
+      // await http.patch(Uri.parse(url),
+      //     body: json.encode({
+      //       'date':newProduct.time,
+      //       'updateDate':DateFormat('yyyy-MM-dd-HH:mm').format(DateTime.now()),
+      //       'name': newProduct.name,
+      //       'description': newProduct.description,
+      //       'price': newProduct.price,
+      //       'creatorId': userId,
+      //       'area': newProduct.area,
+      //       'phone': newProduct.phone,
+      //       'status': newProduct.status,
+      //       'deviceNo': newProduct.deviceNo,
+      //       'category': newProduct.category,
+      //       'uid': newProduct.uid,
+      //       'department': newProduct.department,
+      //       'imagesUrl': newProduct.imagesUrl,
+      //       'isFavorite': newProduct.isFavorite,
+      //       'isRequest': newProduct.isRequest,
+      //       'views': newProduct.views,
+      //       'likes': newProduct.likes,
+      //     }));
 
       _items[prodIndex] = newProduct;
       notifyListeners();
@@ -157,13 +206,44 @@ class Products with ChangeNotifier {
 
   Future<void> updateLikes(String id, likes, index) async {
     if (id.length >= 0) {
-      final url = 'https://souq-alfurat-89023.firebaseio.com/products/$id.json';
-      await http.patch(Uri.parse(url),
-          body: json.encode({
-            'likes': likes + 1,
-          }));
-      //fetchNewAds(false);
-      newItems[index].likes = newItems[index].likes + 1;
+      //update like by firestore
+      Firestore.instance.collection('Ads2').document(id).updateData({
+
+        'likes':likes +1,
+
+      });
+      newItems[index].data['likes'] =  newItems[index].data['likes'] + 1;
+
+      //update like by api
+      // final url = 'https://souq-alfurat-89023.firebaseio.com/products/$id.json';
+      // await http.patch(Uri.parse(url),
+      //     body: json.encode({
+      //       'likes': likes + 1,
+      //     }));
+      // //fetchNewAds(false);
+      // newItems[index].likes = newItems[index].likes + 1;
+      notifyListeners();
+    } else {}
+  }
+
+  Future<void> updateViews(String id, views, index) async {
+    if (id.length >= 0) {
+      //update like by firestore
+      Firestore.instance.collection('Ads2').document(id).updateData({
+
+        'views':views +1,
+
+      });
+      newItems[index].data['views'] =  newItems[index].data['views'] + 1;
+
+      //update like by api
+      // final url = 'https://souq-alfurat-89023.firebaseio.com/products/$id.json';
+      // await http.patch(Uri.parse(url),
+      //     body: json.encode({
+      //       'likes': likes + 1,
+      //     }));
+      // //fetchNewAds(false);
+      // newItems[index].likes = newItems[index].likes + 1;
       notifyListeners();
     } else {}
   }
@@ -192,39 +272,42 @@ class Products with ChangeNotifier {
     final filteredString =
         filterByUser ? '?orderBy="creatorId"equalTo="$userId' : '';
     print('userId from fetch new ad $userId');
-    var url = 'https://souq-alfurat-89023.firebaseio.com/products.json';
+    //var url = 'https://souq-alfurat-89023.firebaseio.com/products.json';
     try {
-      final res = await http.get(Uri.parse(url));
-      final extractedData = json.decode(res.body) as Map<String, dynamic>;
-
-      final List<Product> loadedProducts = [];
-      extractedData.forEach((prodId, prodData) {
-        loadedProducts.add(
-          Product(
-            id: prodId,
-            time: prodData['date'],
-            creatorName: prodData['creatorName'],
-            name: prodData['name'],
-            description: prodData['description'],
-            price: prodData['price'],
-            isFavorite: false,
-            imagesUrl: prodData['imagesUrl'],
-            creatorId: prodData['creatorId'],
-            area: prodData['area'],
-            phone: prodData['phone'],
-            status: prodData['status'],
-            deviceNo: prodData['deviceNo'],
-            category: prodData['category'],
-            uid: prodData['uid'],
-            department: prodData['department'],
-            isRequest: prodData['isRequest'],
-            views: prodData['views'],
-            likes: prodData['likes'],
-          ),
-        );
-      });
-
-      newItems = loadedProducts;
+      QuerySnapshot querySnapshot= await Firestore.instance.collection("Ads2").getDocuments();
+      final List<DocumentSnapshot> snap = querySnapshot.documents.toList();
+      newItems = snap;
+      // final res = await http.get(Uri.parse(url));
+      // final extractedData = json.decode(res.body) as Map<String, dynamic>;
+      //
+      // final List<Product> loadedProducts = [];
+      // extractedData.forEach((prodId, prodData) {
+      //   loadedProducts.add(
+      //     Product(
+      //       id: prodId,
+      //       time: prodData['date'],
+      //       creatorName: prodData['creatorName'],
+      //       name: prodData['name'],
+      //       description: prodData['description'],
+      //       price: prodData['price'],
+      //       isFavorite: false,
+      //       imagesUrl: prodData['imagesUrl'],
+      //       creatorId: prodData['creatorId'],
+      //       area: prodData['area'],
+      //       phone: prodData['phone'],
+      //       status: prodData['status'],
+      //       deviceNo: prodData['deviceNo'],
+      //       category: prodData['category'],
+      //       uid: prodData['uid'],
+      //       department: prodData['department'],
+      //       isRequest: prodData['isRequest'],
+      //       views: prodData['views'],
+      //       likes: prodData['likes'],
+      //     ),
+      //   );
+      // });
+      //
+      // newItems = loadedProducts;
       notifyListeners();
     } catch (e) {
       throw e;

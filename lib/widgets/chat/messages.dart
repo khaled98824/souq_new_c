@@ -49,7 +49,6 @@ class Messages extends StatelessWidget {
           return CircularProgressIndicator();
         }
         final docs = snapShot.data;
-        //final user = FirebaseAuth.instance.currentUser;
         return ListView.builder(
             reverse: true,
             shrinkWrap: true,

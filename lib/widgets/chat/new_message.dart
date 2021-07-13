@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:souqalfurat/providers/auth.dart';
+import 'package:souqalfurat/providers/chats_provider.dart';
 
 class NewMessage extends StatefulWidget {
   final String adId;
@@ -36,23 +37,13 @@ class _NewMessageState extends State<NewMessage> {
       'userId': userId,
       'user_image': userData['imageUrl']
     });
+    final a = Provider.of<ChatsProvider>(context,listen: false).futureChats(adId, userId,chatName,userData['name'],widget.creatorId);
     _controller.clear();
     setState(() {
       _enteredMessage = '';
     });
-    createPrivateChat(userData['name'],userId);
-
   }
-createPrivateChat(userName,userId){
-  Firestore.instance.collection('private_chats').document(chatName).collection(chatName).add({
-    'chatId':chatName,
-    'adId':widget.adId,
-    'createdAt': Timestamp.now(),
-    'userName': userName,
-    'userId': userId,
 
-  });
-}
   String chatName;
   void privateOrG(userIdA){
 

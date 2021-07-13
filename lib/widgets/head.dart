@@ -10,7 +10,7 @@ Widget head(screenSizeWidth2) {
         children: <Widget>[
           screenSizeWidth2 < 380
               ? SizedBox(
-                  width: 5,
+                  width: 3,
                 )
               : SizedBox(
                   width: 5,
@@ -19,14 +19,14 @@ Widget head(screenSizeWidth2) {
             'بيع واشتري كل ما تريد بكل سهولة',
             style: TextStyle(
               color: Colors.black,
-              fontSize: 15,
+              fontSize: 14,
               fontFamily: 'Montserrat-Arabic Regular',
               height: 1,
             ),
           ),
           Padding(
               padding: EdgeInsets.only(
-                  right: screenSizeWidth2 < 380 ? 11 : 16, left: 2),
+                  right: screenSizeWidth2 < 380 ? 8 : 13, left: 2),
               child: Image.asset(
                 'assets/images/logo.png',
                 height: 60,

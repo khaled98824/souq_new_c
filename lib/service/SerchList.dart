@@ -18,7 +18,7 @@ class SerchList extends StatelessWidget{
           borderRadius: BorderRadius.all(Radius.circular(12.0)),
           child: InkWell(
             onTap: (){
-              //String idD=lis.documentID;
+              //§String idD=lis.documentID;
               Navigator.of(context).push(MaterialPageRoute(builder: (context)=>null));
 
               },

@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:souqalfurat/providers/ads_provider.dart';
+import 'package:souqalfurat/providers/chats_provider.dart';
 import 'package:souqalfurat/providers/full_provider.dart';
 import 'package:souqalfurat/screens/add_new_ad.dart';
 import 'package:souqalfurat/screens/edit_account.dart';
@@ -27,6 +28,7 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider.value(value: Auth()),
         ChangeNotifierProvider.value(value: Products()),
+        ChangeNotifierProvider.value(value: ChatsProvider()),
         ChangeNotifierProvider.value(value: FullDataProvider()),
         ChangeNotifierProxyProvider<Auth, Products>(
           create: (_) => Products(),
@@ -50,15 +52,15 @@ class MyApp extends StatelessWidget {
                       color: Colors.white),
                   headline5: TextStyle(
                       fontFamily: 'Montserrat-Arabic Regular',
-                      fontSize: 18,
+                      fontSize: 16,
                       color: Colors.black),
                   headline4: TextStyle(
                       fontFamily: 'Montserrat-Arabic Regular',
-                      fontSize: 18,
+                      fontSize: 16,
                       color: Colors.white),
                   headline3: TextStyle(
                     fontFamily: 'Montserrat-Arabic Regular',
-                    fontSize: 16,
+                    fontSize: 13,
                     color: Colors.black.withOpacity(0.8),
                   )),
               appBarTheme: AppBarTheme(

@@ -1,4 +1,7 @@
 // @dart=2.9
+import 'package:provider/provider.dart';
+import 'package:souqalfurat/providers/chats_provider.dart';
+
 import '../widgets/chat/messages.dart';
 import '../widgets/chat/new_message.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -41,10 +44,12 @@ class _ChatScreenState extends State<ChatScreen> {
     //       return;
     //   }
     // );
+
   }
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Chat Screen'),

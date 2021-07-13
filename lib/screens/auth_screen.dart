@@ -265,8 +265,8 @@ class _AuthCardState extends State<AuthCard>
         curve: Curves.easeIn,
         height: _authMode == AuthMode.SignUp ? 530 : 340,
         constraints: BoxConstraints(
-          minHeight: _authMode == AuthMode.SignUp ? 541 : 270,
-          maxHeight: _authMode == AuthMode.SignUp ? 552 : 280,
+          minHeight: _authMode == AuthMode.SignUp ? 541 : 280,
+          maxHeight: _authMode == AuthMode.SignUp ? 552 : 290,
         ),
         width: devicesize.width * 0.75,
         padding: EdgeInsets.only(top: 5, right: 20, left: 20),

@@ -99,7 +99,6 @@ class _ProfileState extends State<Profile> {
                                     CircleAvatar(
                                       backgroundImage:NetworkImage(value.imageUserUrl),
                                       radius: 27,
-
                                     ),
                                     SizedBox(
                                       width: 12,
