@@ -14,10 +14,10 @@ import 'package:souqalfurat/screens/my_chats.dart';
 import 'package:souqalfurat/screens/profile_screen.dart';
 import 'package:souqalfurat/widgets/head.dart';
 import 'package:souqalfurat/widgets/new_Ads.dart';
-
 import 'package:souqalfurat/widgets/searchArea.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
+import 'ads_of_category.dart';
 import 'constants.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -77,17 +77,16 @@ class _HomeScreenState extends State<HomeScreen> {
   void dispose() {
     // TODO: implement dispose
     super.dispose();
-   // controller.removeListener(listenBottom);
+    // controller.removeListener(listenBottom);
     controller.dispose();
   }
 
   void listenBottom() {
     //final direction = controller.position.userScrollDirection;
-    if (controller.position.pixels>=200) {
+    if (controller.position.pixels >= 200) {
       hideBottom();
     } else {
       showBottom();
-
     }
   }
 
@@ -132,6 +131,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     InkWell(
                       onTap: () {
                         //Navigator.push(context, BouncyPageRoute(widget: Exchange()));
+                        Provider.of<Products>(context, listen: false)
+                            .fetchCategoryAds('الموبايل');
                       },
                       child: Container(
                         child: Row(
@@ -238,13 +239,13 @@ class _HomeScreenState extends State<HomeScreen> {
                   ? Column(
                       children: [
                         SizedBox(
-                          height: screenSizeWidth,
+                          height: MediaQuery.of(context).size.height,
                           child: CustomScrollView(
                             slivers: [
-                              buildImages(context),
+                              buildAds(context),
                             ],
                           ),
-                        )
+                        ),
                       ],
                     )
                   : Column(
@@ -262,7 +263,13 @@ class _HomeScreenState extends State<HomeScreen> {
                               ItemCategory(
                                 text: "السيارات - الدراجات",
                                 imagePath: _listItem[1],
-                                callback: () {},
+                                callback: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              AdsOfCategory("الموبايل")));
+                                },
                                 screenSizeWidth2: screenSizeWidth,
                               )
                             ]),

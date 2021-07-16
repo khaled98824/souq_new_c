@@ -3,6 +3,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:souqalfurat/providers/ads_provider.dart';
+import 'package:souqalfurat/screens/show_ad.dart';
 
 class SerchList extends StatelessWidget{
   final DocumentSnapshot lis;
@@ -11,6 +14,7 @@ class SerchList extends StatelessWidget{
   Widget build(BuildContext context) {
     double swidth=MediaQuery.of(context).size.width;
     double sheight=MediaQuery.of(context).size.height;
+    Provider.of<Products>(context, listen: false).fetchNewAds();
     return Padding(
       padding:  EdgeInsets.only(left: swidth*0.02,right: swidth*0.02,bottom: 0),
 
@@ -19,7 +23,7 @@ class SerchList extends StatelessWidget{
           child: InkWell(
             onTap: (){
               //§String idD=lis.documentID;
-              Navigator.of(context).push(MaterialPageRoute(builder: (context)=>null));
+              Navigator.of(context).push(MaterialPageRoute(builder: (context)=>ShowAd(adId: lis.documentID,)));
 
               },
             child: ClipRRect(
@@ -37,7 +41,7 @@ class SerchList extends StatelessWidget{
                         right:0,
                         child: Container(
                           width:200,
-                          child: Image.network(lis["imagesUrl"][0],fit: BoxFit.fill,height: 200,),
+                          child: Image.network(lis["imagesUrl"][1],fit: BoxFit.fill,height: 200,),
                         ),
                       ),
                       Positioned(

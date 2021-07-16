@@ -1,77 +1,17 @@
 // @dart=2.9
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:souqalfurat/providers/ads_provider.dart';
 import 'package:souqalfurat/screens/constants.dart';
 import 'package:souqalfurat/screens/show_ad.dart';
 
-class NewAds extends StatelessWidget {
-  final int index;
-
-  const NewAds({
-    Key key,
-    @required this.index,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    var ads = Provider.of<Products>(context, listen: false);
-    Size size = MediaQuery.of(context).size;
-    bool isLike;
-    return FutureBuilder(
-        future: Provider.of<Products>(context, listen: false).fetchNewAds(),
-        builder: (context, snapshot) {
-          switch (snapshot.connectionState) {
-            case ConnectionState.waiting:
-              return Center(child: CircularProgressIndicator());
-            default:
-              if (snapshot.hasError) {
-                return Center(child: Text('Some error occurred!'));
-              } else {
-                return Consumer<Products>(
-                  builder: (context, data, _) => NewAdsCard(
-                    image: data.newItems[index]['imagesUrl'][1],
-                    title: data.newItems[index]['name'],
-                    country: data.newItems[index]['area'],
-                    price: data.newItems[index]['price'],
-                    likes: data.newItems[index]['likes'],
-                    views: data.newItems[index]['views'],
-                    id: data.newItems[index].documentID,
-                    date: data.newItems[index]['date'],
-                    index: index,
-                  ),
-                );
-              }
-          }
-        });
-  }
-}
-
-Widget buildAds(ctx) => SliverToBoxAdapter(
-      child: GridView.builder(
-        scrollDirection: Axis.vertical,
-        itemCount: 7,
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          mainAxisExtent: 260,
-          mainAxisSpacing: 2,
-          crossAxisSpacing: 2,
-          childAspectRatio: 0.5,
-        ),
-        primary: false,
-        shrinkWrap: true,
-        itemBuilder: (context, index) => NewAds(index: index),
-      ),
-    );
-
 List likesList = [];
 
 bool like = false;
 
-class NewAdsCard extends StatelessWidget {
-  const NewAdsCard({
+class CategoryAdsItems extends StatelessWidget {
+  const CategoryAdsItems({
     Key key,
     this.date,
     this.index,
@@ -114,8 +54,8 @@ class NewAdsCard extends StatelessWidget {
                     context,
                     MaterialPageRoute(
                         builder: (context) => ShowAd(
-                              adId: id,
-                            )));
+                          adId: id,
+                        )));
               },
               child: Image.network(
                 image,
@@ -154,8 +94,8 @@ class NewAdsCard extends StatelessWidget {
                           context,
                           MaterialPageRoute(
                               builder: (context) => ShowAd(
-                                    adId: id,
-                                  )));
+                                adId: id,
+                              )));
                     },
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.end,
@@ -168,7 +108,7 @@ class NewAdsCard extends StatelessWidget {
                           children: [
                             Padding(
                               padding:
-                                  const EdgeInsets.symmetric(vertical: 8.0),
+                              const EdgeInsets.symmetric(vertical: 8.0),
                               child: Text("$title".toUpperCase(),
                                   textAlign: TextAlign.right,
                                   style: Theme.of(context).textTheme.headline3),
@@ -191,7 +131,7 @@ class NewAdsCard extends StatelessWidget {
                             ),
                             Padding(
                               padding:
-                                  const EdgeInsets.symmetric(vertical: 5.0),
+                              const EdgeInsets.symmetric(vertical: 5.0),
                               child: Text(
                                 '\$$price'.toUpperCase(),
                                 textAlign: TextAlign.right,
@@ -244,7 +184,7 @@ class NewAdsCard extends StatelessWidget {
                             ),
                             Consumer<Products>(
                               builder: (context, data, _) => Text(
-                                'لايك : ${ads.newItems[index]['likes']}',
+                                'لايك : ${ads.itemsCategory[index]['likes']}',
                                 style: TextStyle(
                                     fontFamily: 'Montserrat-Arabic Regular',
                                     fontSize: 13,

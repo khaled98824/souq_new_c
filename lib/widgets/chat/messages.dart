@@ -21,12 +21,6 @@ class Messages extends StatelessWidget {
   void privateOrG(userIdA){
 
     if(isPrivate){
-      print('adId $adId');
-      print('userId from messages $userIdA');
-      print('crId $creatorId');
-      print('isP $isPrivate');
-
-
       chatName=adId;
       chatName = userIdA.toString()+adId+creatorId;
       print('chatName $chatName');

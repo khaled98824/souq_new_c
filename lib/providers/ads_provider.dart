@@ -1,3 +1,5 @@
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
@@ -7,13 +9,14 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
-import 'package:souqalfurat/providers/auth.dart';
 import '../models/http_exception.dart';
 import '../models/ads_model.dart';
 
 class Products with ChangeNotifier {
   List<Product> _items = [];
   List<DocumentSnapshot> newItems = [];
+  List<DocumentSnapshot> itemsCategory = [];
+   late int itemsCategoryCount ;
   List<Product> allItems = [];
 
 
@@ -39,6 +42,7 @@ class Products with ChangeNotifier {
    DocumentSnapshot findById(String id) {
     return newItems.firstWhere((prod) => prod.documentID == id);
   }
+
 
   Future<void> fetchAndSetProducts([bool filterByUser = false]) async {
     var url = 'https://souq-alfurat-89023.firebaseio.com/products.json';
@@ -308,6 +312,19 @@ class Products with ChangeNotifier {
       // });
       //
       // newItems = loadedProducts;
+      notifyListeners();
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  Future<void> fetchCategoryAds(category) async {
+    try {
+      QuerySnapshot querySnapshot= await Firestore.instance.collection("Ads2").where('category',isEqualTo:category).getDocuments();
+      final List<DocumentSnapshot> snap = querySnapshot.documents.toList();
+      itemsCategory = snap;
+      print(itemsCategory.length);
+      itemsCategoryCount = itemsCategory.length;
       notifyListeners();
     } catch (e) {
       throw e;

@@ -4,21 +4,18 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:device_info/device_info.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:souqalfurat/models/ads_model.dart';
 import 'package:souqalfurat/providers/ads_provider.dart';
 import 'package:souqalfurat/providers/auth.dart';
 import '../screens/home.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:path/path.dart';
-import 'package:image_cropper/image_cropper.dart';
+
 
 class AddNewAd extends StatefulWidget {
   static const routeName = "AddNewAd";
@@ -72,7 +69,6 @@ var _initialValues = {
   "isRequest": '',
 };
 var _isInit = true;
-var _isLoading = false;
 
 class _AddNewAdState extends State<AddNewAd> {
   final BuildContext ctx;
@@ -87,35 +83,34 @@ class _AddNewAdState extends State<AddNewAd> {
     super.didChangeDependencies();
     print('idd $id');
 
-    print('name prod ${_editedProduct.name}');
     if (_isInit) {
       if (id != null) {
-        _editedProduct = Provider.of<Products>(ctx).findById(id);
+        _editedProduct = Provider.of<Products>(ctx,listen: false).findById(id);
 
         print(' prodId = $productId');
         _initialValues = {
-          'id': _editedProduct.id,
-          'name': _editedProduct.name,
-          'description': _editedProduct.description,
-          'price': _editedProduct.price,
-          'area': _editedProduct.area,
-          'phone': _editedProduct.phone,
-          'status': _editedProduct.status,
-          'deviceNo': _editedProduct.deviceNo,
-          'category': _editedProduct.category,
-          'uid': _editedProduct.uid,
-          'department': _editedProduct.department,
-          'imagesUrl': _editedProduct.imagesUrl,
-          'isFavorite': _editedProduct.isFavorite,
-          'isRequest': _editedProduct.isRequest,
-          'views': _editedProduct.views,
-          'likes': _editedProduct.likes,
+          'id': _editedProduct['id'],
+          'name': _editedProduct['name'],
+          'description': _editedProduct['description'],
+          'price': _editedProduct['price'],
+          'area': _editedProduct['area'],
+          'phone': _editedProduct['phone'],
+          'status': _editedProduct['status'],
+          'deviceNo': _editedProduct['deviceNo'],
+          'category': _editedProduct['category'],
+          'uid': _editedProduct['uid'],
+          'department': _editedProduct['department'],
+          'imagesUrl': _editedProduct['imagesUrl'],
+          'isFavorite': _editedProduct['isFavorite'],
+          'isRequest': _editedProduct['isRequest'],
+          'views': _editedProduct['views'],
+          'likes': _editedProduct['likes'],
         };
-        urlImages = _editedProduct.imagesUrl;
-        category = _editedProduct.category;
-        category2 = _editedProduct.department;
-        status = _editedProduct.status;
-        area = _editedProduct.area;
+        urlImages = _editedProduct['imagesUrl'];
+        category = _editedProduct['category'];
+        category2 = _editedProduct['department'];
+        status = _editedProduct['status'];
+        area = _editedProduct['area'];
       }
       _isInit = false;
     }
@@ -232,6 +227,8 @@ class _AddNewAdState extends State<AddNewAd> {
 
   var dropSelectItemArea = 'إختر المحافظة';
   String area = '';
+  String description;
+  String name;
   bool chacked = false;
   bool chacked2 = false;
   TextEditingController nameController = TextEditingController();
@@ -243,7 +240,7 @@ class _AddNewAdState extends State<AddNewAd> {
   final _formkey = GlobalKey<FormState>();
 
   var status = 'مستعمل';
-  var urlImages = List<String>();
+  var urlImages = ['https://firebasestorage.googleapis.com/v0/b/souq-alfurat-89023.appspot.com/o/WhatsApp%20Image%202020-09-15%20at%2011.23.35%20AM.jpeg?alt=media&token=a7c3f2d7-2629-4519-9c61-93444f989688',];
   String imageUrl;
 
   upImage() async {
@@ -282,7 +279,7 @@ class _AddNewAdState extends State<AddNewAd> {
   File _image;
 
   Future getImage(context) async {
-    imageG = await ImagePicker.pickImage(source: ImageSource.gallery,imageQuality: 100,maxWidth: 500,maxHeight: 750);
+    imageG = await ImagePicker.pickImage(source: ImageSource.gallery,imageQuality: 100,maxWidth: 1000,maxHeight: 950,);
     setState(() {
       _image = imageG;
     });
@@ -295,7 +292,7 @@ class _AddNewAdState extends State<AddNewAd> {
     var infoData = androidInfo.androidId;
     setState(() {
       deviceNo = infoData;
-      print(deviceNo);
+
     });
   }
 
@@ -361,6 +358,7 @@ class _AddNewAdState extends State<AddNewAd> {
     final Size size = MediaQuery.of(context).size;
     final userGetData = Provider.of<Auth>(context, listen: false).gitCurrentUserInfo();
     final creatorName = Provider.of<Auth>(context,listen: false).nameUser;
+    final userId = Provider.of<Auth>(context,listen: false).userId;
     return Material(
         color: Colors.white60,
         child: Stack(overflow: Overflow.visible, children: <Widget>[
@@ -871,26 +869,10 @@ class _AddNewAdState extends State<AddNewAd> {
                                 }
                                 return null;
                               },
-                              initialValue: _initialValues['name'].toString(),
-                              onSaved: (value) {
-                                _editedProduct = Product(
-                                  id: _editedProduct.id,
-                                  name: value,
-                                  description: _editedProduct.description,
-                                  price: _editedProduct.price,
-                                  area: _editedProduct.area,
-                                  phone: _editedProduct.phone,
-                                  department: _editedProduct.department,
-                                  category: _editedProduct.category,
-                                  imagesUrl: _editedProduct.imagesUrl,
-                                  status: _editedProduct.status,
-                                  isFavorite: _editedProduct.isFavorite,
-                                  views: _editedProduct.views,
-                                  likes: _editedProduct.likes,
-                                  deviceNo: _editedProduct.deviceNo,
-                                  isRequest: _editedProduct.isRequest,
-                                );
+                              onSaved: (val){
+                                name =val;
                               },
+                              initialValue: _initialValues['name'].toString(),
                               maxLines: 1,
                               maxLength: 32,
                               //controller: nameController,
@@ -942,28 +924,10 @@ class _AddNewAdState extends State<AddNewAd> {
                               },
                               initialValue:
                                   _initialValues['description'].toString(),
-                              onSaved: (value) {
-                                _editedProduct = Product(
-                                  id: _editedProduct.id,
-                                  name: _editedProduct.name,
-                                  description: value,
-                                  price: _editedProduct.price,
-                                  area: _editedProduct.area,
-                                  phone: _editedProduct.phone,
-                                  department: _editedProduct.department,
-                                  category: _editedProduct.category,
-                                  imagesUrl: _editedProduct.imagesUrl,
-                                  status: _editedProduct.status,
-                                  isFavorite: _editedProduct.isFavorite,
-                                  views: _editedProduct.views,
-                                  likes: _editedProduct.likes,
-                                  deviceNo: _editedProduct.deviceNo,
-                                  isRequest: _editedProduct.isRequest,
-                                );
+                              onSaved: (val){
+                                description =val;
                               },
-
                               maxLines: 10,
-                              //controller: descriptionController,
                               textAlign: TextAlign.right,
                               decoration: InputDecoration(
                                 enabledBorder: OutlineInputBorder(
@@ -1039,24 +1003,7 @@ class _AddNewAdState extends State<AddNewAd> {
                                         chacked = value;
                                         chacked2 = false;
                                         status = 'جديد';
-                                        _editedProduct = Product(
-                                          id: _editedProduct.id,
-                                          name: _editedProduct.name,
-                                          description:
-                                              _editedProduct.description,
-                                          price: _editedProduct.price,
-                                          area: _editedProduct.area,
-                                          phone: _editedProduct.phone,
-                                          department: _editedProduct.department,
-                                          category: _editedProduct.category,
-                                          imagesUrl: _editedProduct.imagesUrl,
-                                          status: status,
-                                          isFavorite: _editedProduct.isFavorite,
-                                          views: _editedProduct.views,
-                                          likes: _editedProduct.likes,
-                                          deviceNo: _editedProduct.deviceNo,
-                                          isRequest: _editedProduct.isRequest,
-                                        );
+
                                       });
                                     },
                                   ),
@@ -1078,24 +1025,7 @@ class _AddNewAdState extends State<AddNewAd> {
                                         chacked2 = value;
                                         chacked = false;
                                         status = 'مستعمل';
-                                        _editedProduct = Product(
-                                          id: _editedProduct.id,
-                                          name: _editedProduct.name,
-                                          description:
-                                              _editedProduct.description,
-                                          price: _editedProduct.price,
-                                          area: _editedProduct.area,
-                                          phone: _editedProduct.phone,
-                                          department: _editedProduct.department,
-                                          category: _editedProduct.category,
-                                          imagesUrl: _editedProduct.imagesUrl,
-                                          status: status,
-                                          isFavorite: _editedProduct.isFavorite,
-                                          views: _editedProduct.views,
-                                          likes: _editedProduct.likes,
-                                          deviceNo: _editedProduct.deviceNo,
-                                          isRequest: _editedProduct.isRequest,
-                                        );
+
                                       });
                                     },
                                   )
@@ -1143,23 +1073,6 @@ class _AddNewAdState extends State<AddNewAd> {
                                 setState(() {
                                   dropSelectItemArea = theDate;
                                   area = theDate;
-                                  _editedProduct = Product(
-                                    id: _editedProduct.id,
-                                    name: _editedProduct.name,
-                                    description: _editedProduct.description,
-                                    price: _editedProduct.price,
-                                    area: area,
-                                    phone: _editedProduct.phone,
-                                    department: _editedProduct.department,
-                                    category: _editedProduct.category,
-                                    imagesUrl: _editedProduct.imagesUrl,
-                                    status: _editedProduct.status,
-                                    isFavorite: _editedProduct.isFavorite,
-                                    views: _editedProduct.views,
-                                    likes: _editedProduct.likes,
-                                    deviceNo: _editedProduct.deviceNo,
-                                    isRequest: _editedProduct.isRequest,
-                                  );
                                   showAreaTextField = true;
                                 });
                               },
@@ -1188,22 +1101,7 @@ class _AddNewAdState extends State<AddNewAd> {
                                       },
                                       onSaved: (val) {
                                         _editedProduct = Product(
-                                          id: _editedProduct.id,
-                                          name: _editedProduct.name,
-                                          description:
-                                              _editedProduct.description,
-                                          price: _editedProduct.price,
                                           area: area,
-                                          phone: _editedProduct.phone,
-                                          department: _editedProduct.department,
-                                          category: _editedProduct.category,
-                                          imagesUrl: _editedProduct.imagesUrl,
-                                          status: _editedProduct.status,
-                                          isFavorite: _editedProduct.isFavorite,
-                                          views: _editedProduct.views,
-                                          likes: _editedProduct.likes,
-                                          deviceNo: _editedProduct.deviceNo,
-                                          isRequest: _editedProduct.isRequest,
                                         );
                                       },
                                       maxLength: 30,
@@ -1278,23 +1176,7 @@ class _AddNewAdState extends State<AddNewAd> {
                                   return null;
                                 },
                                 onSaved: (val) {
-                                  _editedProduct = Product(
-                                    id: _editedProduct.id,
-                                    name: _editedProduct.name,
-                                    description: _editedProduct.description,
-                                    price: double.parse(val),
-                                    area: _editedProduct.area,
-                                    phone: _editedProduct.phone,
-                                    department: _editedProduct.department,
-                                    category: _editedProduct.category,
-                                    imagesUrl: _editedProduct.imagesUrl,
-                                    status: _editedProduct.status,
-                                    isFavorite: _editedProduct.isFavorite,
-                                    views: _editedProduct.views,
-                                    likes: _editedProduct.likes,
-                                    deviceNo: _editedProduct.deviceNo,
-                                    isRequest: _editedProduct.isRequest,
-                                  );
+                                  price = double.parse(val) ;
                                 },
                                 keyboardType: TextInputType.numberWithOptions(
                                     decimal: true),
@@ -1364,23 +1246,7 @@ class _AddNewAdState extends State<AddNewAd> {
                                   return null;
                                 },
                                 onSaved: (val) {
-                                  _editedProduct = Product(
-                                    id: _editedProduct.id,
-                                    name: _editedProduct.name,
-                                    description: _editedProduct.description,
-                                    price: _editedProduct.price,
-                                    area: _editedProduct.area,
-                                    phone: num.parse(val),
-                                    department: _editedProduct.department,
-                                    category: _editedProduct.category,
-                                    imagesUrl: _editedProduct.imagesUrl,
-                                    status: _editedProduct.status,
-                                    isFavorite: _editedProduct.isFavorite,
-                                    views: _editedProduct.views,
-                                    likes: _editedProduct.likes,
-                                    deviceNo: _editedProduct.deviceNo,
-                                    isRequest: _editedProduct.isRequest,
-                                  );
+                                  phone = int.parse(val) ;
                                 },
                                 textAlign: TextAlign.right,
                                 keyboardType: TextInputType.numberWithOptions(
@@ -1402,7 +1268,6 @@ class _AddNewAdState extends State<AddNewAd> {
                                   hoverColor: Colors.white,
                                 ),
                                 cursorRadius: Radius.circular(10),
-                                onChanged: (val) {},
                               ),
                             ),
                           ),
@@ -1443,27 +1308,28 @@ class _AddNewAdState extends State<AddNewAd> {
                                       _formkey.currentState.validate();
                                   _formkey.currentState.save();
                                   FocusScope.of(context).unfocus();
+                                  price = double.parse(priceText);
                                   _editedProduct = Product(
                                     time: DateFormat('yyyy-MM-dd-HH:mm').format(DateTime.now()),
                                     creatorName: creatorName,
-                                    id: _editedProduct.id,
-                                    name: _editedProduct.name,
-                                    description: _editedProduct.description,
-                                    price: _editedProduct.price,
+                                    id: '',
+                                    name: name,
+                                    description: description,
+                                    price: price,
                                     area: '$area- ${areaController.text}',
-                                    phone: _editedProduct.phone,
+                                    phone: phone,
                                     status: status,
-                                    deviceNo: _editedProduct.deviceNo,
+                                    deviceNo: deviceNo,
                                     category: category,
-                                    uid: _editedProduct.uid,
+                                    uid: userId,
                                     department: category2,
                                     imagesUrl: urlImages,
-                                    isFavorite: _editedProduct.isFavorite,
-                                    isRequest: _editedProduct.isRequest,
-                                    views: _editedProduct.views,
-                                    likes: _editedProduct.likes,
+                                    isFavorite: false,
+                                    isRequest: false,
+                                    views: 0,
+                                    likes:0,
                                   );
-                                  if (urlImages.length > 0) {
+                                  if (urlImages.length > 1) {
                                     if (id != null) {
                                       try {
                                         await Provider.of<Products>(context,
@@ -1518,7 +1384,7 @@ class _AddNewAdState extends State<AddNewAd> {
                                     await showDialog(
                                         context: context,
                                         builder: (ctx) => AlertDialog(
-                                              title: Text('لا يوجد صودة'),
+                                              title: Text('لا يوجد صورة'),
                                               content: Text('اضف صورة رجاءاً'),
                                               actions: [
                                                 TextButton(

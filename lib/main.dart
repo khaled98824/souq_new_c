@@ -6,6 +6,7 @@ import 'package:souqalfurat/providers/ads_provider.dart';
 import 'package:souqalfurat/providers/chats_provider.dart';
 import 'package:souqalfurat/providers/full_provider.dart';
 import 'package:souqalfurat/screens/add_new_ad.dart';
+import 'package:souqalfurat/screens/ads_of_category.dart';
 import 'package:souqalfurat/screens/edit_account.dart';
 import 'package:souqalfurat/screens/home.dart';
 import 'package:souqalfurat/screens/my_chats.dart';
@@ -78,6 +79,7 @@ class MyApp extends StatelessWidget {
             UserAdsScreen.routeName: (_) => UserAdsScreen(),
             ShowAd.routeName: (_) => ShowAd(),
             EditUserInfo.routeName: (_) => EditUserInfo(),
+            AdsOfCategory.routeName:(_)=>AdsOfCategory(''),
           },
           home: auth.isAuth
               ? HomeScreen()

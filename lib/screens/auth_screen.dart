@@ -24,6 +24,7 @@ class AuthScreen extends StatelessWidget {
     final devicesize = MediaQuery.of(context).size;
     return Scaffold(
         appBar: AppBar(
+          centerTitle: true,
           title: Text(
             'التسجيل',
             style: TextStyle(fontFamily: 'Montserrat-Arabic Regular'),
@@ -124,12 +125,12 @@ class _AuthCardState extends State<AuthCard>
   void initState() {
     // TODO: implement initState
     super.initState();
-    Timer(Duration(milliseconds: 400), () {
+    Timer(Duration(milliseconds: 900), () {
       autoFillFields();
     });
     _controller = AnimationController(
       vsync: this,
-      duration: Duration(milliseconds: 300),
+      duration: Duration(milliseconds: 400),
     );
 
     _slideAnimation = Tween<Offset>(
@@ -263,163 +264,167 @@ class _AuthCardState extends State<AuthCard>
       child: AnimatedContainer(
         duration: Duration(microseconds: 300),
         curve: Curves.easeIn,
-        height: _authMode == AuthMode.SignUp ? 530 : 340,
+        height: _authMode == AuthMode.SignUp ? 530 : 330,
         constraints: BoxConstraints(
           minHeight: _authMode == AuthMode.SignUp ? 541 : 280,
-          maxHeight: _authMode == AuthMode.SignUp ? 552 : 290,
+          maxHeight: _authMode == AuthMode.SignUp ? 652 : 290,
         ),
         width: devicesize.width * 0.75,
         padding: EdgeInsets.only(top: 5, right: 20, left: 20),
         child: Form(
           key: _formlKey,
-          child: Column(
+          child: Wrap(
             children: [
-              if(_authMode ==AuthMode.SignUp)Center(child: UserImagePicker()),
-              TextFormField(
-                  decoration: InputDecoration(labelText: 'E-mail'),
-                  controller: _emailController,
-                  keyboardType: TextInputType.emailAddress,
-                  validator: (val) {
-                    if (val.isEmpty || !val.contains('@')) {
-                      return 'Invalid email';
-                    }
-                    return null;
-                  },
-                  onSaved: (val) {
-                    _authData['email'] = val;
-                  }),
-              SizedBox(
-                height: 5,
-              ),
-              TextFormField(
-                  decoration: InputDecoration(labelText: 'Password'),
-                  controller: _passwordController,
-                  obscureText: true,
-                  validator: (val) {
-                    if (val.isEmpty || val.length < 5) {
-                      return 'Invalid Sort Password';
-                    }
-                    return null;
-                  },
-                  onSaved: (val) {
-                    _authData['password'] = val;
-                  }),
-              AnimatedContainer(
-                duration: Duration(milliseconds: 300),
-                constraints: BoxConstraints(
-                  minHeight: _authMode == AuthMode.SignUp ? 50 : 0,
-                  maxHeight: _authMode == AuthMode.SignUp ? 50 : 0,
-                ),
-                curve: Curves.easeIn,
-                child: FadeTransition(
-                  opacity: _opacityAnimation,
-                  child: SlideTransition(
-                    position: _slideAnimation,
-                    child: TextFormField(
-                        decoration:
+              Column(
+                children: [
+                  if(_authMode ==AuthMode.SignUp)Center(child: UserImagePicker()),
+                  TextFormField(
+                      decoration: InputDecoration(labelText: 'E-mail'),
+                      controller: _emailController,
+                      keyboardType: TextInputType.emailAddress,
+                      validator: (val) {
+                        if (val.isEmpty || !val.contains('@')) {
+                          return 'Invalid email';
+                        }
+                        return null;
+                      },
+                      onSaved: (val) {
+                        _authData['email'] = val;
+                      }),
+                  SizedBox(
+                    height: 5,
+                  ),
+                  TextFormField(
+                      decoration: InputDecoration(labelText: 'Password'),
+                      controller: _passwordController,
+                      obscureText: true,
+                      validator: (val) {
+                        if (val.isEmpty || val.length < 5) {
+                          return 'Invalid Sort Password';
+                        }
+                        return null;
+                      },
+                      onSaved: (val) {
+                        _authData['password'] = val;
+                      }),
+                  AnimatedContainer(
+                    duration: Duration(milliseconds: 300),
+                    constraints: BoxConstraints(
+                      minHeight: _authMode == AuthMode.SignUp ? 50 : 0,
+                      maxHeight: _authMode == AuthMode.SignUp ? 50 : 0,
+                    ),
+                    curve: Curves.easeIn,
+                    child: FadeTransition(
+                      opacity: _opacityAnimation,
+                      child: SlideTransition(
+                        position: _slideAnimation,
+                        child: TextFormField(
+                            decoration:
                             InputDecoration(labelText: 'Confirm Password'),
-                        enabled: true,
-                        validator: AuthMode == AuthMode.SignUp
-                            ? (val) {
-                                if (val != _passwordController.text) {
-                                  return ' Password do not Match';
-                                }
-                                return null;
+                            enabled: true,
+                            validator: AuthMode == AuthMode.SignUp
+                                ? (val) {
+                              if (val != _passwordController.text) {
+                                return ' Password do not Match';
                               }
-                            : null,
-                        onSaved: (val) {
-                          _authData['pa'] = val;
-                        }),
+                              return null;
+                            }
+                                : null,
+                            onSaved: (val) {
+                              _authData['pa'] = val;
+                            }),
+                      ),
+                    ),
                   ),
-                ),
-              ),
-              SizedBox(
-                height: 6,
-              ),
-              AnimatedContainer(
-                duration: Duration(milliseconds: 300),
-                constraints: BoxConstraints(
-                  minHeight: _authMode == AuthMode.SignUp ? 50 : 0,
-                  maxHeight: _authMode == AuthMode.SignUp ? 50 : 0,
-                ),
-                curve: Curves.easeIn,
-                child: FadeTransition(
-                  opacity: _opacityAnimation,
-                  child: SlideTransition(
-                    position: _slideAnimation,
-                    child: TextFormField(
-                        decoration:
+                  SizedBox(
+                    height: 6,
+                  ),
+                  AnimatedContainer(
+                    duration: Duration(milliseconds: 300),
+                    constraints: BoxConstraints(
+                      minHeight: _authMode == AuthMode.SignUp ? 50 : 0,
+                      maxHeight: _authMode == AuthMode.SignUp ? 50 : 0,
+                    ),
+                    curve: Curves.easeIn,
+                    child: FadeTransition(
+                      opacity: _opacityAnimation,
+                      child: SlideTransition(
+                        position: _slideAnimation,
+                        child: TextFormField(
+                            decoration:
                             InputDecoration(labelText: 'Enter Yor Name'),
-                        enabled: true,
-                        validator: AuthMode == AuthMode.SignUp
-                            ? (val) {
-                                if (val.length < 4) {
-                                  return 'name so short';
-                                }
-                                return null;
+                            enabled: true,
+                            validator: AuthMode == AuthMode.SignUp
+                                ? (val) {
+                              if (val.length < 4) {
+                                return 'name so short';
                               }
-                            : null,
-                        onSaved: (val) {
-                          _authData['name'] = val;
-                        }),
+                              return null;
+                            }
+                                : null,
+                            onSaved: (val) {
+                              _authData['name'] = val;
+                            }),
+                      ),
+                    ),
                   ),
-                ),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              AnimatedContainer(
-                duration: Duration(milliseconds: 300),
-                constraints: BoxConstraints(
-                  minHeight: _authMode == AuthMode.SignUp ? 50 : 0,
-                  maxHeight: _authMode == AuthMode.SignUp ? 50 : 0,
-                ),
-                curve: Curves.easeIn,
-                child: FadeTransition(
-                  opacity: _opacityAnimation,
-                  child: SlideTransition(
-                    position: _slideAnimation,
-                    child: TextFormField(
-                        decoration:
+                  SizedBox(
+                    height: 10,
+                  ),
+                  AnimatedContainer(
+                    duration: Duration(milliseconds: 300),
+                    constraints: BoxConstraints(
+                      minHeight: _authMode == AuthMode.SignUp ? 50 : 0,
+                      maxHeight: _authMode == AuthMode.SignUp ? 50 : 0,
+                    ),
+                    curve: Curves.easeIn,
+                    child: FadeTransition(
+                      opacity: _opacityAnimation,
+                      child: SlideTransition(
+                        position: _slideAnimation,
+                        child: TextFormField(
+                            decoration:
                             InputDecoration(labelText: 'Enter Your Area'),
-                        enabled: true,
-                        validator: AuthMode == AuthMode.SignUp
-                            ? (val) {
-                                if (val.length < 4) {
-                                  return ' area so short';
-                                }
-                                return null;
+                            enabled: true,
+                            validator: AuthMode == AuthMode.SignUp
+                                ? (val) {
+                              if (val.length < 4) {
+                                return ' area so short';
                               }
-                            : null,
-                        onSaved: (val) {
-                          _authData['area'] = val;
-                        }),
+                              return null;
+                            }
+                                : null,
+                            onSaved: (val) {
+                              _authData['area'] = val;
+                            }),
+                      ),
+                    ),
                   ),
-                ),
+                  SizedBox(
+                    height: 5,
+                  ),
+                  if (_isLoading) CircularProgressIndicator(),
+                  RaisedButton(
+                    child: Text(_authMode == AuthMode.Login ? 'LOGIN' : 'SIGNUP'),
+                    onPressed: _submit,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30)),
+                    padding: EdgeInsets.symmetric(horizontal: 30, vertical: 5),
+                    color: Theme.of(context).primaryColor,
+                    textColor: Theme.of(context).primaryTextTheme.bodyText2.color,
+                  ),
+                  FlatButton(
+                    onPressed: _switchAuthMode,
+                    child: Text(
+                        '${_authMode == AuthMode.Login ? 'SIGNUP' : 'LOGIN'} INSTEAD'),
+                    textColor: Colors.black.withOpacity(0.6),
+                    padding: EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                    color: Colors.white,
+                  )
+                ],
               ),
-              SizedBox(
-                height: 5,
-              ),
-              if (_isLoading) CircularProgressIndicator(),
-              RaisedButton(
-                child: Text(_authMode == AuthMode.Login ? 'LOGIN' : 'SIGNUP'),
-                onPressed: _submit,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30)),
-                padding: EdgeInsets.symmetric(horizontal: 30, vertical: 5),
-                color: Theme.of(context).primaryColor,
-                textColor: Theme.of(context).primaryTextTheme.bodyText2.color,
-              ),
-              FlatButton(
-                onPressed: _switchAuthMode,
-                child: Text(
-                    '${_authMode == AuthMode.Login ? 'SIGNUP' : 'LOGIN'} INSTEAD'),
-                textColor: Colors.black.withOpacity(0.6),
-                padding: EdgeInsets.symmetric(horizontal: 5, vertical: 2),
-                color: Colors.white,
-              )
             ],
-          ),
+          )
         ),
       ),
     );
@@ -467,7 +472,7 @@ class _UserImagePickerState extends State<UserImagePicker> {
           backgroundImage: _pickedImage != null ?FileImage(_pickedImage):null,
 
         ),
-        SizedBox(height: 10,),
+        SizedBox(height: 8,),
 
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -475,7 +480,8 @@ class _UserImagePickerState extends State<UserImagePicker> {
             FlatButton.icon(onPressed: ()=>_pickImage(ImageSource.gallery),
               textColor: Theme.of(context).primaryColor,
               icon: Icon(Icons.image_outlined,size: 33,),
-              label: Text('Add Image \nFrom Gallery',textAlign: TextAlign.center,style: TextStyle(fontSize: 14),),
+              label: Text(' أضف صورة \n من الإستوديو',textAlign: TextAlign.center,style: TextStyle(fontSize: 14,fontFamily: 'Montserrat-Arabic Regular'
+              ),),
             ),
 
           ],

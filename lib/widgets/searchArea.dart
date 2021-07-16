@@ -14,12 +14,12 @@ class _SearchAreaDesignState extends State<SearchAreaDesign> {
         showSearch(context: context, delegate: SerchData());
       },
       child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 17, vertical: 6),
+        padding: EdgeInsets.symmetric(horizontal: 22, vertical: 6),
         child: Container(
           height: 37,
           // width: 330,
           decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(40), color: Colors.grey[400]),
+              borderRadius: BorderRadius.circular(40), color: Colors.grey[300]),
           child: Stack(
             alignment: Alignment(0.3, 0),
             children: <Widget>[
