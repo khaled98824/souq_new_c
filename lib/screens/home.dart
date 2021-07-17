@@ -16,7 +16,6 @@ import 'package:souqalfurat/widgets/head.dart';
 import 'package:souqalfurat/widgets/new_Ads.dart';
 import 'package:souqalfurat/widgets/searchArea.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-
 import 'ads_of_category.dart';
 import 'constants.dart';
 
@@ -102,7 +101,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final screenSizeWidth = MediaQuery.of(context).size.width;
     final getAllData =
-        Provider.of<Products>(context, listen: false).fetchAndSetProducts();
+        Provider.of<Products>(context, listen: false).fetchNewAds(false);
     final fullDataP = Provider.of<FullDataProvider>(context, listen: false);
     return Scaffold(
       backgroundColor: kBackgroundColor,
@@ -130,9 +129,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   children: [
                     InkWell(
                       onTap: () {
-                        //Navigator.push(context, BouncyPageRoute(widget: Exchange()));
-                        Provider.of<Products>(context, listen: false)
-                            .fetchCategoryAds('الموبايل');
+
                       },
                       child: Container(
                         child: Row(
@@ -257,7 +254,13 @@ class _HomeScreenState extends State<HomeScreen> {
                               ItemCategory(
                                 text: "أجهزة - إلكترونيات",
                                 imagePath: _listItem[0],
-                                callback: () {},
+                                callback: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              AdsOfCategory("أجهزة - إلكترونيات")));
+                                },
                                 screenSizeWidth2: screenSizeWidth,
                               ),
                               ItemCategory(
@@ -268,7 +271,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       context,
                                       MaterialPageRoute(
                                           builder: (context) =>
-                                              AdsOfCategory("الموبايل")));
+                                              AdsOfCategory("السيارات - الدراجات")));
                                 },
                                 screenSizeWidth2: screenSizeWidth,
                               )
@@ -280,13 +283,23 @@ class _HomeScreenState extends State<HomeScreen> {
                               ItemCategory(
                                 text: "الموبايل",
                                 imagePath: _listItem[2],
-                                callback: () {},
+                                callback: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              AdsOfCategory("الموبايل")));
+                                },
                                 screenSizeWidth2: screenSizeWidth,
                               ),
                               ItemCategory(
                                 text: "وظائف وأعمال",
                                 imagePath: _listItem[3],
-                                callback: () {},
+                                callback: () {Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            AdsOfCategory("وظائف وأعمال")));},
                                 screenSizeWidth2: screenSizeWidth,
                               )
                             ]),
@@ -297,13 +310,21 @@ class _HomeScreenState extends State<HomeScreen> {
                               ItemCategory(
                                 text: "مهن وخدمات",
                                 imagePath: _listItem[4],
-                                callback: () {},
+                                callback: () {Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            AdsOfCategory("مهن وخدمات")));},
                                 screenSizeWidth2: screenSizeWidth,
                               ),
                               ItemCategory(
                                 text: "المنزل",
                                 imagePath: _listItem[5],
-                                callback: () {},
+                                callback: () {Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            AdsOfCategory("المنزل")));},
                                 screenSizeWidth2: screenSizeWidth,
                               )
                             ]),
@@ -314,13 +335,21 @@ class _HomeScreenState extends State<HomeScreen> {
                               ItemCategory(
                                 text: "المعدات والشاحنات",
                                 imagePath: _listItem[6],
-                                callback: () {},
+                                callback: () {Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            AdsOfCategory("المعدات والشاحنات")));},
                                 screenSizeWidth2: screenSizeWidth,
                               ),
                               ItemCategory(
                                 text: "المواشي",
                                 imagePath: _listItem[7],
-                                callback: () {},
+                                callback: () {Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            AdsOfCategory("المواشي")));},
                                 screenSizeWidth2: screenSizeWidth,
                               )
                             ]),
@@ -331,13 +360,21 @@ class _HomeScreenState extends State<HomeScreen> {
                               ItemCategory(
                                 text: "الزراعة",
                                 imagePath: _listItem[8],
-                                callback: () {},
+                                callback: () {Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            AdsOfCategory("الزراعة")));},
                                 screenSizeWidth2: screenSizeWidth,
                               ),
                               ItemCategory(
                                 text: "ألعاب",
                                 imagePath: _listItem[9],
-                                callback: () {},
+                                callback: () {Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            AdsOfCategory("ألعاب")));},
                                 screenSizeWidth2: screenSizeWidth,
                               )
                             ]),
@@ -348,13 +385,21 @@ class _HomeScreenState extends State<HomeScreen> {
                               ItemCategory(
                                 text: "ألبسة",
                                 imagePath: _listItem[10],
-                                callback: () {},
+                                callback: () {Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            AdsOfCategory("ألبسة")));},
                                 screenSizeWidth2: screenSizeWidth,
                               ),
                               ItemCategory(
                                 text: "أطعمة",
                                 imagePath: _listItem[11],
-                                callback: () {},
+                                callback: () {Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            AdsOfCategory("أطعمة")));},
                                 screenSizeWidth2: screenSizeWidth,
                               )
                             ]),
@@ -365,7 +410,11 @@ class _HomeScreenState extends State<HomeScreen> {
                               ItemCategory(
                                 text: "طلبات المستخدمين",
                                 imagePath: _listItem[12],
-                                callback: () {},
+                                callback: () {Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            AdsOfCategory("طلبات المستخدمين")));},
                                 screenSizeWidth2: screenSizeWidth,
                               ),
                             ]),

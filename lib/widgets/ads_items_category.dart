@@ -6,12 +6,12 @@ import 'package:souqalfurat/providers/ads_provider.dart';
 import 'package:souqalfurat/screens/constants.dart';
 import 'package:souqalfurat/screens/show_ad.dart';
 
-List likesList = [];
+List likesList =[''];
 
 bool like = false;
 
-class CategoryAdsItems extends StatelessWidget {
-  const CategoryAdsItems({
+class CategoryAdsItemsCard extends StatelessWidget {
+  const CategoryAdsItemsCard({
     Key key,
     this.date,
     this.index,
@@ -35,27 +35,25 @@ class CategoryAdsItems extends StatelessWidget {
     var ads = Provider.of<Products>(context, listen: false);
     Size size = MediaQuery.of(context).size;
     bool isLike;
-
     return Container(
       margin: EdgeInsets.only(
         left: kDefaultPadding / 4,
         //top: kDefaultPadding / 2,
         right: kDefaultPadding / 4,
-        //bottom: kDefaultPadding  ,
+        //bottom: kDefaultPadding,
       ),
       width: size.width * 0.4,
       child: Column(
         children: <Widget>[
           GestureDetector(
               onTap: () {
-                Provider.of<Products>(context, listen: false)
-                    .updateViews(id, views, index);
+                Provider.of<Products>(context, listen: false).updateViews(id, views, index);
                 Navigator.push(
                     context,
                     MaterialPageRoute(
                         builder: (context) => ShowAd(
                           adId: id,
-                        )));
+                        ),),);
               },
               child: Image.network(
                 image,
@@ -151,7 +149,8 @@ class CategoryAdsItems extends StatelessWidget {
                     children: [
                       InkWell(
                         onTap: () async {
-                          if (likesList.length > 0) {
+                          print('object');
+                          if (likesList.length > 1) {
                             for (int i = 0; i < likesList.length; i++) {
                               if (likesList[i] == id) {
                                 isLike = true;
@@ -165,7 +164,7 @@ class CategoryAdsItems extends StatelessWidget {
                             } else {
                               Provider.of<Products>(context, listen: false)
                                   .updateLikes(id, likes, index);
-                              likesList.add(id);
+                              likesList.add('id');
                             }
                           } else {
                             Provider.of<Products>(context, listen: false)

@@ -255,7 +255,7 @@ class _ShowAdState extends State<ShowAd> {
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) => ChatScreen(
-                                        adId, true, userId, ads['creatorId'])));
+                                        adId, true, userId, ads['creatorId'],ads['name'],'')));
                           },
                           child: Container(
                             width: 150,
@@ -392,7 +392,7 @@ class _ShowAdState extends State<ShowAd> {
                                 adId,
                                 false,
                                 Provider.of<Auth>(context, listen: true).userId,
-                                ads['creatorId']),
+                                ads['creatorId'],''),
                             Positioned(
                                 top:
                                     MediaQuery.of(context).size.height / 2 + 37,
@@ -415,7 +415,7 @@ class _ShowAdState extends State<ShowAd> {
                                 ))
                           ],
                         )),
-                    NewMessage(adId, false, userId, ads['creatorId']),
+                    NewMessage(adId, false, userId, ads['creatorId'],ads['name'],''),
                   ],
                 ),
               ),

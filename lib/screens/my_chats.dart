@@ -1,4 +1,12 @@
+// @dart=2.9
+
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
+import 'package:souqalfurat/providers/auth.dart';
+import 'package:souqalfurat/providers/chats_provider.dart';
+
+import 'chatScreen.dart';
 
 class MyChats extends StatefulWidget {
   static const routeName = "/my_chats";
@@ -10,8 +18,51 @@ class MyChats extends StatefulWidget {
 class _MyChatsState extends State<MyChats> {
   @override
   Widget build(BuildContext context) {
+    final userId = Provider.of<Auth>(context, listen: false).userId;
+    final chats = Provider.of<ChatsProvider>(context, listen: false)
+        .fetchMyChats('', userId);
+
     return Scaffold(
-      appBar: AppBar(title: Text('My Chats'),),
-    );
+        appBar: AppBar(
+          centerTitle: true,
+          title: Text('دردشاتي'),
+        ),
+        body: FutureBuilder(
+            future: Provider.of<ChatsProvider>(context, listen: false)
+                .fetchMyChats(userId, userId),
+            builder: (context, data) {
+              if (data.connectionState == ConnectionState.waiting) {
+                return Center(child: CircularProgressIndicator());
+              } else {
+                return ListView.builder(
+                    itemCount:Provider.of<ChatsProvider>(context, listen: false).listChats.length,
+                    itemBuilder: (context, index) => InkWell(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => ChatScreen(
+                                          data.data[index]['adId'],
+                                          true,
+                                          userId,
+                                          data.data[index]['creatorAdId'],
+                                          data.data[index]['adName'],
+                                      data.data[index]['chatId'],
+                                        )));
+                          },
+                          child: Card(
+                            child: ListTile(
+                              title:Text(data.data[index]['chatDate']),
+                              leading:   Text(data.data[index]['creatorChatName']),
+                              trailing:Text(
+                            data.data[index]['adName'],
+                              overflow: TextOverflow.clip,
+                              softWrap: true,
+                            ),
+                            ),
+                          ),
+                        ));
+              }
+            }));
   }
 }

@@ -15,10 +15,12 @@ class ChatScreen extends StatefulWidget {
   final String adId;
   final String userId;
   final String creatorId;
+  final String adName;
   final bool isPrivate;
+  final String chatId;
 
 
-  const ChatScreen( this.adId,this.isPrivate,this.userId,this.creatorId) ;
+  const ChatScreen( this.adId,this.isPrivate,this.userId,this.creatorId,this.adName,this.chatId) ;
   @override
   _ChatScreenState createState() => _ChatScreenState();
 }
@@ -28,6 +30,12 @@ class _ChatScreenState extends State<ChatScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    print(widget.adName);
+    print(widget.userId);
+    print(widget.creatorId);
+    print(widget.adId);
+    print(widget.isPrivate);
+
     // final fbm = FirebaseMessaging();
     // fbm.requestNotificationPermissions();
     // fbm.configure(
@@ -84,8 +92,8 @@ class _ChatScreenState extends State<ChatScreen> {
       body:Container(
         child: Column(
           children: [
-            Expanded(child: Messages(widget.adId,widget.isPrivate,widget.userId,widget.creatorId)),
-            NewMessage(widget.adId,widget.isPrivate,widget.userId,widget.creatorId),
+            Expanded(child: Messages(widget.adId,widget.isPrivate,widget.userId,widget.creatorId,widget.chatId)),
+            NewMessage(widget.adId,widget.isPrivate,widget.userId,widget.creatorId,widget.adName,widget.chatId),
           ],
         ),
       ),

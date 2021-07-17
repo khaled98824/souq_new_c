@@ -10,9 +10,11 @@ class NewMessage extends StatefulWidget {
   final String adId;
   final String userId;
   final String creatorId;
+  final String adName;
   final bool isPrivate;
+  final String chatId;
 
-   NewMessage(this.adId,this.isPrivate,this.userId,this.creatorId);
+   NewMessage(this.adId,this.isPrivate,this.userId,this.creatorId,this.adName,this.chatId);
   @override
   _NewMessageState createState() => _NewMessageState();
 }
@@ -36,7 +38,7 @@ class _NewMessageState extends State<NewMessage> {
       'userId': userId,
       'user_image': userData['imageUrl']
     });
-    final a = Provider.of<ChatsProvider>(context,listen: false).futureChats(adId, userId,chatName,userData['name'],widget.creatorId);
+    final a = Provider.of<ChatsProvider>(context,listen: false).futureChats(adId, userId,chatName,userData['name'],widget.creatorId,widget.adName);
     _controller.clear();
     setState(() {
       _enteredMessage = '';
@@ -44,16 +46,16 @@ class _NewMessageState extends State<NewMessage> {
   }
 
   String chatName;
-  void privateOrG(userIdA){
+  void privateOrG(userIdA,String chatId){
 
-    if(widget.isPrivate){
+    if(widget.isPrivate && chatId.isNotEmpty){
+     chatName = chatId;
+    }else if(widget.isPrivate){
       print('adId ${widget.adId}');
       print('userId from messages $userIdA');
       print('crId ${widget.creatorId}');
       print('isP ${widget.isPrivate}');
 
-
-      chatName=widget.adId;
       chatName = userIdA.toString()+widget.adId+widget.creatorId;
       print('chatName $chatName');
     }else{
@@ -64,7 +66,7 @@ class _NewMessageState extends State<NewMessage> {
   Widget build(BuildContext context) {
 
     final userIdG= Provider.of<Auth>(context).userId;
-    privateOrG(userIdG);
+    privateOrG(userIdG,widget.chatId);
 
     return Container(
       margin: EdgeInsets.only(top: 8),

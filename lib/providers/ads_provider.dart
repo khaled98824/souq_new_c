@@ -1,13 +1,9 @@
-
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
 import 'dart:async';
 import 'dart:convert';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import '../models/http_exception.dart';
 import '../models/ads_model.dart';
@@ -15,10 +11,11 @@ import '../models/ads_model.dart';
 class Products with ChangeNotifier {
   List<Product> _items = [];
   List<DocumentSnapshot> newItems = [];
+  List<DocumentSnapshot> myAds = [];
   List<DocumentSnapshot> itemsCategory = [];
-   late int itemsCategoryCount ;
-  List<Product> allItems = [];
+  late int itemsCategoryCount;
 
+  List<Product> allItems = [];
 
   late String authToken;
   late String userId;
@@ -39,10 +36,9 @@ class Products with ChangeNotifier {
     return _items.where((prodItem) => prodItem.isFavorite).toList();
   }
 
-   DocumentSnapshot findById(String id) {
+  DocumentSnapshot findById(String id) {
     return newItems.firstWhere((prod) => prod.documentID == id);
   }
-
 
   Future<void> fetchAndSetProducts([bool filterByUser = false]) async {
     var url = 'https://souq-alfurat-89023.firebaseio.com/products.json';
@@ -76,7 +72,7 @@ class Products with ChangeNotifier {
           ),
         );
       });
-      allItems=loadedProducts;
+      allItems = loadedProducts;
       final Iterable<Product> aList =
           loadedProducts.where((element) => element.creatorId == userId);
       _items = aList.toList();
@@ -89,25 +85,24 @@ class Products with ChangeNotifier {
   Future<void> addProduct(Product product) async {
     //add by firesrore
     Firestore.instance.collection('Ads2').add({
-              'date':product.time,
-              'creatorName':product.creatorName,
-              'name': product.name,
-              'description': product.description,
-              'price': product.price,
-              'creatorId': userId,
-              'area': product.area,
-              'phone': product.phone,
-              'status': product.status,
-              'deviceNo': product.deviceNo,
-              'category': product.category,
-              'uid': product.uid,
-              'department': product.department,
-              'imagesUrl': product.imagesUrl,
-              'isFavorite': product.isFavorite,
-              'isRequest': product.isRequest,
-              'views': product.views,
-              'likes': product.likes,
-
+      'date': product.time,
+      'creatorName': product.creatorName,
+      'name': product.name,
+      'description': product.description,
+      'price': product.price,
+      'creatorId': userId,
+      'area': product.area,
+      'phone': product.phone,
+      'status': product.status,
+      'deviceNo': product.deviceNo,
+      'category': product.category,
+      'uid': product.uid,
+      'department': product.department,
+      'imagesUrl': product.imagesUrl,
+      'isFavorite': product.isFavorite,
+      'isRequest': product.isRequest,
+      'views': product.views,
+      'likes': product.likes,
     });
 
     //add by api
@@ -152,31 +147,28 @@ class Products with ChangeNotifier {
   Future<void> updateProduct(String id, Product newProduct) async {
     final prodIndex = _items.indexWhere((prod) => prod.id == id);
 
-
     if (prodIndex >= 0) {
       //update by firestor
       Firestore.instance.collection('Ads2').document(id).updateData({
-              'date':newProduct.time,
-              'updateDate':DateFormat('yyyy-MM-dd-HH:mm').format(DateTime.now()),
-              'name': newProduct.name,
-              'description': newProduct.description,
-              'price': newProduct.price,
-              'creatorId': userId,
-              'area': newProduct.area,
-              'phone': newProduct.phone,
-              'status': newProduct.status,
-              'deviceNo': newProduct.deviceNo,
-              'category': newProduct.category,
-              'uid': newProduct.uid,
-              'department': newProduct.department,
-              'imagesUrl': newProduct.imagesUrl,
-              'isFavorite': newProduct.isFavorite,
-              'isRequest': newProduct.isRequest,
-              'views': newProduct.views,
-              'likes': newProduct.likes,
-
+        'date': newProduct.time,
+        'updateDate': DateFormat('yyyy-MM-dd-HH:mm').format(DateTime.now()),
+        'name': newProduct.name,
+        'description': newProduct.description,
+        'price': newProduct.price,
+        'creatorId': userId,
+        'area': newProduct.area,
+        'phone': newProduct.phone,
+        'status': newProduct.status,
+        'deviceNo': newProduct.deviceNo,
+        'category': newProduct.category,
+        'uid': newProduct.uid,
+        'department': newProduct.department,
+        'imagesUrl': newProduct.imagesUrl,
+        'isFavorite': newProduct.isFavorite,
+        'isRequest': newProduct.isRequest,
+        'views': newProduct.views,
+        'likes': newProduct.likes,
       });
-
 
       //update by api
 
@@ -212,11 +204,9 @@ class Products with ChangeNotifier {
     if (id.length >= 0) {
       //update like by firestore
       Firestore.instance.collection('Ads2').document(id).updateData({
-
-        'likes':likes +1,
-
+        'likes': likes + 1,
       });
-      newItems[index].data['likes'] =  newItems[index].data['likes'] + 1;
+      newItems[index].data['likes'] = newItems[index].data['likes'] + 1;
 
       //update like by api
       // final url = 'https://souq-alfurat-89023.firebaseio.com/products/$id.json';
@@ -234,11 +224,9 @@ class Products with ChangeNotifier {
     if (id.length >= 0) {
       //update like by firestore
       Firestore.instance.collection('Ads2').document(id).updateData({
-
-        'views':views +1,
-
+        'views': views + 1,
       });
-      newItems[index].data['views'] =  newItems[index].data['views'] + 1;
+      newItems[index].data['views'] = newItems[index].data['views'] + 1;
 
       //update like by api
       // final url = 'https://souq-alfurat-89023.firebaseio.com/products/$id.json';
@@ -278,7 +266,8 @@ class Products with ChangeNotifier {
     print('userId from fetch new ad $userId');
     //var url = 'https://souq-alfurat-89023.firebaseio.com/products.json';
     try {
-      QuerySnapshot querySnapshot= await Firestore.instance.collection("Ads2").getDocuments();
+      QuerySnapshot querySnapshot =
+          await Firestore.instance.collection("Ads2").getDocuments();
       final List<DocumentSnapshot> snap = querySnapshot.documents.toList();
       newItems = snap;
       // final res = await http.get(Uri.parse(url));
@@ -320,11 +309,32 @@ class Products with ChangeNotifier {
 
   Future<void> fetchCategoryAds(category) async {
     try {
-      QuerySnapshot querySnapshot= await Firestore.instance.collection("Ads2").where('category',isEqualTo:category).getDocuments();
+      QuerySnapshot querySnapshot = await Firestore.instance
+          .collection("Ads2")
+          .where('category', isEqualTo: category)
+          .getDocuments();
       final List<DocumentSnapshot> snap = querySnapshot.documents.toList();
       itemsCategory = snap;
       print(itemsCategory.length);
       itemsCategoryCount = itemsCategory.length;
+      newItems = snap;
+      notifyListeners();
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  //fetch my ads
+
+  Future<void> fetchMyAds(creatorId) async {
+    print('crator id f $creatorId');
+    try {
+      QuerySnapshot querySnapshot = await Firestore.instance
+          .collection("Ads2")
+          .where('creatorId', isEqualTo: creatorId)
+          .getDocuments();
+      final List<DocumentSnapshot> snap = querySnapshot.documents.toList();
+      myAds = snap;
       notifyListeners();
     } catch (e) {
       throw e;

@@ -14,31 +14,37 @@ class Messages extends StatelessWidget {
   final String userId;
   final String creatorId;
   final bool isPrivate;
+  final String chatId;
 
+  Messages(this.adId, this.isPrivate, this.userId, this.creatorId, this.chatId);
 
-   Messages( this.adId,this.isPrivate,this.userId,this.creatorId) ;
   String chatName;
-  void privateOrG(userIdA){
 
-    if(isPrivate){
+  void privateOrG(userIdA,String chatId) {
+    if (isPrivate &&chatId.isNotEmpty) {
+      chatName = chatId;
+    } else if(isPrivate){
       chatName=adId;
       chatName = userIdA.toString()+adId+creatorId;
       print('chatName $chatName');
-    }else{
-      chatName=adId;
+    }
+    else {
+      chatName = adId;
     }
   }
+
   @override
   Widget build(BuildContext context) {
-
-    final userIdA= Provider.of<Auth>(context,listen: false).userId;
-    privateOrG(userIdA);
+    final userIdA = Provider.of<Auth>(context, listen: false).userId;
+    privateOrG(userIdA, chatId);
     return StreamBuilder(
       stream: Firestore.instance
-          .collection('chat').document(chatName).collection(chatName)
+          .collection('chat')
+          .document(chatName)
+          .collection(chatName)
           .orderBy('createdAt', descending: true)
           .snapshots(),
-      builder: (ctx,AsyncSnapshot<QuerySnapshot> snapShot) {
+      builder: (ctx, AsyncSnapshot<QuerySnapshot> snapShot) {
         if (snapShot.connectionState == ConnectionState.waiting) {
           return CircularProgressIndicator();
         }
@@ -46,16 +52,16 @@ class Messages extends StatelessWidget {
         return ListView.builder(
             reverse: true,
             shrinkWrap: true,
-            itemCount:docs.documents.length,
+            itemCount: docs.documents.length,
             itemBuilder: (ctx, index) => MessageBubble(
                   docs.documents[index]['text'],
                   docs.documents[index]['userId'] == userId,
                   docs.documents[index]['userName'],
-              docs.documents[index]['user_image'],
-              key: ValueKey(
-                    docs.documents[index]['text'] + docs.documents[index]['userName'],
+                  docs.documents[index]['user_image'],
+                  key: ValueKey(
+                    docs.documents[index]['text'] +
+                        docs.documents[index]['userName'],
                   ),
-
                 ));
       },
     );
