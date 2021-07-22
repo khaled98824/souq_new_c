@@ -21,7 +21,7 @@ class NewAds extends StatelessWidget {
     Size size = MediaQuery.of(context).size;
     bool isLike;
     return FutureBuilder(
-        future: Provider.of<Products>(context, listen: false).fetchNewAds(),
+        future: Provider.of<Products>(context, listen: false).fetchNewAds(false),
         builder: (context, snapshot) {
           switch (snapshot.connectionState) {
             case ConnectionState.waiting:
@@ -41,6 +41,7 @@ class NewAds extends StatelessWidget {
                     id: data.newItems[index].documentID,
                     date: data.newItems[index]['date'],
                     index: index,
+                    kindLike: 'newAds',
                   ),
                 );
               }
@@ -52,7 +53,7 @@ class NewAds extends StatelessWidget {
 Widget buildAds(ctx) => SliverToBoxAdapter(
       child: GridView.builder(
         scrollDirection: Axis.vertical,
-        itemCount: 7,
+        itemCount: 2,
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
           mainAxisExtent: 260,
@@ -73,6 +74,7 @@ bool like = false;
 class NewAdsCard extends StatelessWidget {
   const NewAdsCard({
     Key key,
+    this.kindLike,
     this.date,
     this.index,
     this.id,
@@ -85,7 +87,7 @@ class NewAdsCard extends StatelessWidget {
     this.press,
   }) : super(key: key);
 
-  final String image, title, country, id, date;
+  final String image, title, country, id, date,kindLike;
   final int likes, views, index;
   final double price;
   final Function press;
@@ -109,7 +111,7 @@ class NewAdsCard extends StatelessWidget {
           GestureDetector(
               onTap: () {
                 Provider.of<Products>(context, listen: false)
-                    .updateViews(id, views, index);
+                    .updateViews(id, views, index,'');
                 Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -149,7 +151,7 @@ class NewAdsCard extends StatelessWidget {
                   InkWell(
                     onTap: () {
                       Provider.of<Products>(context, listen: false)
-                          .updateViews(id, views, index);
+                          .updateViews(id, views, index,'');
                       Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -171,6 +173,8 @@ class NewAdsCard extends StatelessWidget {
                                   const EdgeInsets.symmetric(vertical: 8.0),
                               child: Text("$title".toUpperCase(),
                                   textAlign: TextAlign.right,
+                                  softWrap: true,
+                                  overflow: TextOverflow.clip,
                                   style: Theme.of(context).textTheme.headline3),
                             ),
                             Text(
@@ -224,12 +228,12 @@ class NewAdsCard extends StatelessWidget {
                             if (isLike) {
                             } else {
                               Provider.of<Products>(context, listen: false)
-                                  .updateLikes(id, likes, index);
+                                  .updateLikes(id, likes, index,kindLike);
                               likesList.add(id);
                             }
                           } else {
                             Provider.of<Products>(context, listen: false)
-                                .updateLikes(id, likes, index);
+                                .updateLikes(id, likes, index,kindLike);
                             likesList.add(id);
                           }
                         },

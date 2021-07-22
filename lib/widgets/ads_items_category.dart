@@ -13,6 +13,7 @@ bool like = false;
 class CategoryAdsItemsCard extends StatelessWidget {
   const CategoryAdsItemsCard({
     Key key,
+    this.kindLike,
     this.date,
     this.index,
     this.id,
@@ -25,7 +26,7 @@ class CategoryAdsItemsCard extends StatelessWidget {
     this.press,
   }) : super(key: key);
 
-  final String image, title, country, id, date;
+  final String image, title, country, id, date,kindLike;
   final int likes, views, index;
   final double price;
   final Function press;
@@ -47,7 +48,7 @@ class CategoryAdsItemsCard extends StatelessWidget {
         children: <Widget>[
           GestureDetector(
               onTap: () {
-                Provider.of<Products>(context, listen: false).updateViews(id, views, index);
+                Provider.of<Products>(context, listen: false).updateViews(id, views, index,'request');
                 Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -87,7 +88,7 @@ class CategoryAdsItemsCard extends StatelessWidget {
                   InkWell(
                     onTap: () {
                       Provider.of<Products>(context, listen: false)
-                          .updateViews(id, views, index);
+                          .updateViews(id, views, index,'request');
                       Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -163,12 +164,12 @@ class CategoryAdsItemsCard extends StatelessWidget {
                             if (isLike) {
                             } else {
                               Provider.of<Products>(context, listen: false)
-                                  .updateLikes(id, likes, index);
+                                  .updateLikes(id, likes, index,kindLike);
                               likesList.add('id');
                             }
                           } else {
                             Provider.of<Products>(context, listen: false)
-                                .updateLikes(id, likes, index);
+                                .updateLikes(id, likes, index,kindLike);
                             likesList.add(id);
                           }
                         },

@@ -19,7 +19,7 @@ class Product with ChangeNotifier {
   final String area;
   final double price;
   final String deviceNo;
-  final List imagesUrl;
+  final List<String> imagesUrl;
   final int phone;
   final String uid;
   int likes;

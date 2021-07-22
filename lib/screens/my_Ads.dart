@@ -1,8 +1,10 @@
 // @dart=2.9
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:souqalfurat/providers/ads_provider.dart';
 import 'package:souqalfurat/providers/auth.dart';
+import 'package:souqalfurat/screens/add_new_ad.dart';
 import 'package:souqalfurat/screens/show_ad.dart';
 
 class MyAds extends StatefulWidget {
@@ -38,11 +40,9 @@ class _MyAdsState extends State<MyAds> {
                       child: ListTile(
                         title:Text(data.myAds[index]['date']),
                         leading:   Text(data.myAds[index]['name']),
-                        trailing:Text(
-                          data.myAds[index]['area'],
-                          overflow: TextOverflow.clip,
-                          softWrap: true,
-                        ),
+                        trailing:IconButton(icon: Icon(FontAwesomeIcons.edit),onPressed: (){
+                          Navigator.push(context, MaterialPageRoute(builder: (context)=>AddNewAd(context,data.myAds[index].documentID,true)));
+                        },)
                       ),
                     ),
                   )));

@@ -144,7 +144,9 @@ class _ShowAdState extends State<ShowAd> {
     var ads = Provider.of<Products>(context, listen: false).findById(adId);
     final userId = Provider.of<Auth>(context, listen: false).uid2;
     final userId2 = Provider.of<Auth>(context, listen: false).userId;
-    final String chatName = userId2 + adId + ads['creatorId'];
+    final String chatName = userId2 != null && adId != null
+        ? userId2 + adId + ads['creatorId']
+        : '';
     final List imagesUrl = ads['imagesUrl'];
     return SafeArea(
       child: Scaffold(
@@ -164,26 +166,27 @@ class _ShowAdState extends State<ShowAd> {
                     ),
                     Consumer<Products>(
                         builder: (ctx, data, _) => CarouselSlider(
-                              items: imagesUrl.map((url){
-                                return Builder(builder: (BuildContext context){
-                                  return  InkWell(
+                              items: imagesUrl.map((url) {
+                                return Builder(builder: (BuildContext context) {
+                                  return InkWell(
                                     onTap: () {
                                       Navigator.push(
                                           context,
                                           MaterialPageRoute(
                                               builder: (context) => PageImage(
-                                                url,
-                                              )));
+                                                    url,
+                                                  )));
                                     },
                                     child: Container(
                                       child: Hero(
                                           tag: Text('imageAd2'),
                                           child: ClipRRect(
                                             borderRadius:
-                                            BorderRadius.circular(17),
+                                                BorderRadius.circular(17),
                                             child: Padding(
-                                              padding: const EdgeInsets.symmetric(
-                                                  horizontal: 10),
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 10),
                                               child: Image.network(
                                                 ads['imagesUrl'][imageUrl4Show],
                                                 fit: BoxFit.cover,
@@ -251,11 +254,19 @@ class _ShowAdState extends State<ShowAd> {
                         ),
                         InkWell(
                           onTap: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => ChatScreen(
-                                        adId, true, userId, ads['creatorId'],ads['name'],'')));
+                            chatName.length > 1
+                                ? Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => ChatScreen(
+                                            adId,
+                                            true,
+                                            userId,
+                                            ads['creatorId'],
+                                            ads['name'],
+                                            '')))
+                                : Scaffold.of(context).showSnackBar(
+                                    SnackBar(content: Text('try after login again')));
                           },
                           child: Container(
                             width: 150,
@@ -392,7 +403,8 @@ class _ShowAdState extends State<ShowAd> {
                                 adId,
                                 false,
                                 Provider.of<Auth>(context, listen: true).userId,
-                                ads['creatorId'],''),
+                                ads['creatorId'],
+                                ''),
                             Positioned(
                                 top:
                                     MediaQuery.of(context).size.height / 2 + 37,
@@ -415,7 +427,8 @@ class _ShowAdState extends State<ShowAd> {
                                 ))
                           ],
                         )),
-                    NewMessage(adId, false, userId, ads['creatorId'],ads['name'],''),
+                    NewMessage(
+                        adId, false, userId, ads['creatorId'], ads['name'], ''),
                   ],
                 ),
               ),
@@ -506,7 +519,7 @@ class _PageImageState extends State<PageImage> {
           centerTitle: true,
           title: Text(
             'الصورة',
-            style:Theme.of(context).textTheme.headline4,
+            style: Theme.of(context).textTheme.headline4,
           ),
         ),
         body: Stack(
@@ -529,7 +542,6 @@ class _PageImageState extends State<PageImage> {
                 //loadingChild: CircularProgressIndicator(),
               ),
             ),
-
           ],
         ));
   }

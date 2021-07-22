@@ -113,6 +113,7 @@ class AdsOfCategoryItems extends StatelessWidget {
                     id: data.itemsCategory[index].documentID,
                     date: data.itemsCategory[index]['date'],
                     index: index,
+                    kindLike: 'category',
                   ),
                 );
               }

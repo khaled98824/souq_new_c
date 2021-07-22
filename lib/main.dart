@@ -11,6 +11,7 @@ import 'package:souqalfurat/screens/edit_account.dart';
 import 'package:souqalfurat/screens/home.dart';
 import 'package:souqalfurat/screens/my_chats.dart';
 import 'package:souqalfurat/screens/profile_screen.dart';
+import 'package:souqalfurat/screens/requests.dart';
 import 'package:souqalfurat/screens/user_ads_screen.dart';
 import '../screens/splash_screen.dart';
 import 'providers/auth.dart';
@@ -61,7 +62,7 @@ class MyApp extends StatelessWidget {
                       color: Colors.white),
                   headline3: TextStyle(
                     fontFamily: 'Montserrat-Arabic Regular',
-                    fontSize: 13,
+                    fontSize: 12,
                     color: Colors.black.withOpacity(0.8),
                   )),
               appBarTheme: AppBarTheme(
@@ -74,12 +75,14 @@ class MyApp extends StatelessWidget {
             Profile.routeName: (_) => Profile(),
             MyChats.routeName: (_) => MyChats(),
             MyAds.routeName: (_) => MyAds(),
-            AddNewAd.routeName: (_) => AddNewAd(context, ''),
+            AddNewAd.routeName: (_) => AddNewAd(context, '',null),
             AuthScreen.routeName: (_) => AuthScreen(),
             UserAdsScreen.routeName: (_) => UserAdsScreen(),
             ShowAd.routeName: (_) => ShowAd(),
             EditUserInfo.routeName: (_) => EditUserInfo(),
             AdsOfCategory.routeName:(_)=>AdsOfCategory(''),
+            Requests.routeName: (_) => Requests(),
+
           },
           home: auth.isAuth
               ? HomeScreen()

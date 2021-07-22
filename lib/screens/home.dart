@@ -12,6 +12,7 @@ import 'package:souqalfurat/screens/add_new_ad.dart';
 import 'package:souqalfurat/screens/my_Ads.dart';
 import 'package:souqalfurat/screens/my_chats.dart';
 import 'package:souqalfurat/screens/profile_screen.dart';
+import 'package:souqalfurat/screens/requests.dart';
 import 'package:souqalfurat/widgets/head.dart';
 import 'package:souqalfurat/widgets/new_Ads.dart';
 import 'package:souqalfurat/widgets/searchArea.dart';
@@ -129,7 +130,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   children: [
                     InkWell(
                       onTap: () {
-
+                        Navigator.pushNamed(context, Requests.routeName);
                       },
                       child: Container(
                         child: Row(
@@ -482,7 +483,7 @@ class _HomeScreenState extends State<HomeScreen> {
       Navigator.pushNamed(context, MyChats.routeName);
     } else if (_currentIndex == 2) {
       Navigator.push(context,
-          MaterialPageRoute(builder: (ctx) => AddNewAd(context, null)));
+          MaterialPageRoute(builder: (ctx) => AddNewAd(context, null,false)));
       print(index);
     } else if (_currentIndex == 1) {
       Navigator.pushNamed(context, MyAds.routeName);

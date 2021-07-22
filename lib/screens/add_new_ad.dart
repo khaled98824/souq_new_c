@@ -16,23 +16,24 @@ import 'package:souqalfurat/providers/auth.dart';
 import '../screens/home.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
-
 class AddNewAd extends StatefulWidget {
   static const routeName = "AddNewAd";
   final BuildContext ctx;
+  final isEdit;
+  String id;
 
-  final String id;
-
-  AddNewAd(this.ctx, this.id);
+  AddNewAd(this.ctx, this.id, this.isEdit);
 
   @override
-  _AddNewAdState createState() => _AddNewAdState(ctx, id);
+  _AddNewAdState createState() => _AddNewAdState();
 }
 
 bool loadingImage = false;
 var time = DateFormat('yyyy-MM-dd-HH:mm').format(DateTime.now());
 String priceText;
 double price = 0;
+int views = 0;
+int likes = 0;
 File imageG;
 File image;
 File image2;
@@ -50,9 +51,12 @@ String imageUrl6;
 String imageUrl7;
 int phone;
 
-var _editedProduct ;
+var _editedProduct;
+
+DocumentSnapshot oldData;
+
 var _initialValues = {
-  "date":'',
+  "date": '',
   "name": '',
   "description": '',
   "price": 0.0,
@@ -68,52 +72,13 @@ var _initialValues = {
   "phone": 0,
   "isRequest": '',
 };
-var _isInit = true;
 
 class _AddNewAdState extends State<AddNewAd> {
-  final BuildContext ctx;
-
-  final String id;
-
-  _AddNewAdState(this.ctx, this.id);
-
   @override
   didChangeDependencies() async {
     // TODO: implement didChangeDependencies
     super.didChangeDependencies();
-    print('idd $id');
-
-    if (_isInit) {
-      if (id != null) {
-        _editedProduct = Provider.of<Products>(ctx,listen: false).findById(id);
-
-        print(' prodId = $productId');
-        _initialValues = {
-          'id': _editedProduct['id'],
-          'name': _editedProduct['name'],
-          'description': _editedProduct['description'],
-          'price': _editedProduct['price'],
-          'area': _editedProduct['area'],
-          'phone': _editedProduct['phone'],
-          'status': _editedProduct['status'],
-          'deviceNo': _editedProduct['deviceNo'],
-          'category': _editedProduct['category'],
-          'uid': _editedProduct['uid'],
-          'department': _editedProduct['department'],
-          'imagesUrl': _editedProduct['imagesUrl'],
-          'isFavorite': _editedProduct['isFavorite'],
-          'isRequest': _editedProduct['isRequest'],
-          'views': _editedProduct['views'],
-          'likes': _editedProduct['likes'],
-        };
-        urlImages = _editedProduct['imagesUrl'];
-        category = _editedProduct['category'];
-        category2 = _editedProduct['department'];
-        status = _editedProduct['status'];
-        area = _editedProduct['area'];
-      }
-      _isInit = false;
-    }
+    if (widget.isEdit == true) getEditInfo();
   }
 
   bool choseCategory = true;
@@ -227,6 +192,7 @@ class _AddNewAdState extends State<AddNewAd> {
 
   var dropSelectItemArea = 'إختر المحافظة';
   String area = '';
+  String area2 = '';
   String description;
   String name;
   bool chacked = false;
@@ -240,7 +206,9 @@ class _AddNewAdState extends State<AddNewAd> {
   final _formkey = GlobalKey<FormState>();
 
   var status = 'مستعمل';
-  var urlImages = ['https://firebasestorage.googleapis.com/v0/b/souq-alfurat-89023.appspot.com/o/WhatsApp%20Image%202020-09-15%20at%2011.23.35%20AM.jpeg?alt=media&token=a7c3f2d7-2629-4519-9c61-93444f989688',];
+  List<String> urlImages = [
+    'https://firebasestorage.googleapis.com/v0/b/souq-alfurat-89023.appspot.com/o/WhatsApp%20Image%202020-09-15%20at%2011.23.35%20AM.jpeg?alt=media&token=a7c3f2d7-2629-4519-9c61-93444f989688',
+  ];
   String imageUrl;
 
   upImage() async {
@@ -279,7 +247,12 @@ class _AddNewAdState extends State<AddNewAd> {
   File _image;
 
   Future getImage(context) async {
-    imageG = await ImagePicker.pickImage(source: ImageSource.gallery,imageQuality: 100,maxWidth: 1000,maxHeight: 950,);
+    imageG = await ImagePicker.pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 100,
+      maxWidth: 1000,
+      maxHeight: 950,
+    );
     setState(() {
       _image = imageG;
     });
@@ -292,7 +265,6 @@ class _AddNewAdState extends State<AddNewAd> {
     var infoData = androidInfo.androidId;
     setState(() {
       deviceNo = infoData;
-
     });
   }
 
@@ -325,6 +297,8 @@ class _AddNewAdState extends State<AddNewAd> {
   List<String> newZList = [];
   DocumentSnapshot usersList;
 
+  //get edit info
+
   addNewZ() async {
     var firestore = Firestore.instance;
 
@@ -344,21 +318,89 @@ class _AddNewAdState extends State<AddNewAd> {
     }
   }
 
+  getEditInfo() {
+    if (widget.isEdit == true) {
+      print('from did change');
+      oldData =
+          Provider.of<Products>(context, listen: false).findById(widget.id);
+      _initialValues = {
+        'id': oldData['id'],
+        'name': oldData['name'],
+        'description': oldData['description'],
+        'price': oldData['price'],
+        'area': oldData['area'],
+        'phone': oldData['phone'],
+        'status': oldData['status'],
+        'deviceNo': oldData['deviceNo'],
+        'category': oldData['category'],
+        'uid': oldData['uid'],
+        'department': oldData['department'],
+        'imagesUrl': oldData['imagesUrl'],
+        'isFavorite': oldData['isFavorite'],
+        'isRequest': oldData['isRequest'],
+        'views': oldData['views'],
+        'likes': oldData['likes'],
+        'creatorId': oldData['creatorId']
+      };
+      //urlImages = oldData['imagesUrl'];
+      category = oldData['category'];
+      category2 = oldData['department'];
+      status = oldData['status'];
+      area = oldData['area'];
+      likes = oldData['likes'];
+      views = oldData['views'];
+    }
+    print(oldData['department']);
+  }
+
   @override
   void dispose() {
     // TODO: implement dispose
 
     super.dispose();
     newZList.clear();
+    nameController.clear();
+
+      image = null;
+      image2 = null;
+      image3 = null;
+      image4 = null;
+      image5 = null;
+      image6 = null;
+      image7 = null;
+      imageUrl = null;
+      imageUrl2 = null;
+      imageUrl3 = null;
+      imageUrl4 = null;
+      imageUrl5 = null;
+      imageUrl6 = null;
+      imageUrl7 = null;
+      urlImages.clear();
+
+    _initialValues = {
+      "date": '',
+      "name": '',
+      "description": '',
+      "price": 0.0,
+      "imagesUrl": '',
+      "area": '',
+      "category": '',
+      "department": '',
+      "status": '',
+      "isFavorite": false,
+      "uid": '',
+      "likes": '',
+      "views": '',
+      "phone": 0,
+      "isRequest": false,
+    };
   }
 
-  var productId;
-
   Widget build(BuildContext context) {
-    final Size size = MediaQuery.of(context).size;
-    final userGetData = Provider.of<Auth>(context, listen: false).gitCurrentUserInfo();
-    final creatorName = Provider.of<Auth>(context,listen: false).nameUser;
-    final userId = Provider.of<Auth>(context,listen: false).userId;
+    final userGetData =
+        Provider.of<Auth>(context, listen: false).gitCurrentUserInfo();
+    final creatorName = Provider.of<Auth>(context, listen: false).nameUser;
+    final userId = Provider.of<Auth>(context, listen: false).userId;
     return Material(
         color: Colors.white60,
         child: Stack(overflow: Overflow.visible, children: <Widget>[
@@ -375,7 +417,7 @@ class _AddNewAdState extends State<AddNewAd> {
                           width: 1,
                         ),
                         InkWell(
-                          onTap: (){
+                          onTap: () {
                             print(creatorName);
                           },
                           child: Text(
@@ -388,9 +430,11 @@ class _AddNewAdState extends State<AddNewAd> {
                         ),
                         InkWell(
                             onTap: () {
+                              loadingImage = false;
+                              widget.id = '';
                               Navigator.pushReplacementNamed(
                                   context, HomeScreen.routeName);
-                              loadingImage = false;
+                              Navigator.of(context).pop();
                             },
                             child: Icon(
                               Icons.arrow_forward_ios,
@@ -620,7 +664,7 @@ class _AddNewAdState extends State<AddNewAd> {
                                 'ما الذي تريد بيعه أو الإعلان عنه ؟',
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
-                                    fontSize: 20,
+                                    fontSize: 16,
                                     fontFamily: 'Montserrat-Arabic Regular',
                                     height: 1.5),
                               )),
@@ -657,7 +701,7 @@ class _AddNewAdState extends State<AddNewAd> {
                                               left: 10, right: 5),
                                           child: Icon(
                                             Icons.menu,
-                                            size: 28,
+                                            size: 26,
                                           )),
                                       onChanged: (String theDate) {
                                         setState(() {
@@ -773,13 +817,13 @@ class _AddNewAdState extends State<AddNewAd> {
                                         print(category2);
                                       },
                                       value: dropSelectItemCategory,
-                                      elevation: 7,
+                                      elevation: 9,
                                     ),
                                     Text(
                                       ': إختر القسم الرئيسي ',
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
-                                          fontSize: 16,
+                                          fontSize: 14,
                                           fontFamily:
                                               'Montserrat-Arabic Regular',
                                           height: 0.5),
@@ -793,7 +837,7 @@ class _AddNewAdState extends State<AddNewAd> {
                                         alignment: WrapAlignment.end,
                                         children: <Widget>[
                                           DropdownButton<String>(
-                                            iconSize: 30,
+                                            iconSize: 28,
                                             style: TextStyle(
                                                 color: Colors.green[800]),
                                             items: dropItemsCategory2
@@ -831,7 +875,7 @@ class _AddNewAdState extends State<AddNewAd> {
                                             ': إختر القسم الفرعي ',
                                             textAlign: TextAlign.center,
                                             style: TextStyle(
-                                                fontSize: 16,
+                                                fontSize: 14,
                                                 fontFamily:
                                                     'Montserrat-Arabic Regular',
                                                 height: 0.5),
@@ -869,17 +913,20 @@ class _AddNewAdState extends State<AddNewAd> {
                                 }
                                 return null;
                               },
-                              onSaved: (val){
-                                name =val;
+                              onSaved: (val) {
+                                name = val;
                               },
-                              initialValue: _initialValues['name'].toString(),
+                              onChanged: (val) {
+                                name = val;
+                              },
                               maxLines: 1,
+                              initialValue: _initialValues['name'].toString(),
                               maxLength: 32,
                               //controller: nameController,
                               textAlign: TextAlign.right,
                               decoration: InputDecoration(
                                 hintText: '"مثال : "آيفون ٧ للبيع',
-                                hintStyle: TextStyle(fontSize: 14, height: 1),
+                                hintStyle: TextStyle(fontSize: 12, height: 1),
                               ),
                             ),
                           ),
@@ -888,7 +935,7 @@ class _AddNewAdState extends State<AddNewAd> {
                           'ضع إسم للإعلان',
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                              fontSize: 16,
+                              fontSize: 12,
                               fontFamily: 'Montserrat-Arabic Regular',
                               height: 1),
                         ),
@@ -924,8 +971,8 @@ class _AddNewAdState extends State<AddNewAd> {
                               },
                               initialValue:
                                   _initialValues['description'].toString(),
-                              onSaved: (val){
-                                description =val;
+                              onSaved: (val) {
+                                description = val;
                               },
                               maxLines: 10,
                               textAlign: TextAlign.right,
@@ -947,7 +994,7 @@ class _AddNewAdState extends State<AddNewAd> {
                             'ضع وصف للإعلان',
                             textAlign: TextAlign.start,
                             style: TextStyle(
-                                fontSize: 16,
+                                fontSize: 12,
                                 fontFamily: 'Montserrat-Arabic Regular',
                                 height: 1.8),
                           ),
@@ -967,73 +1014,65 @@ class _AddNewAdState extends State<AddNewAd> {
                       alignment: WrapAlignment.center,
                       crossAxisAlignment: WrapCrossAlignment.start,
                     ),
-                    statusShow
-                        ? Wrap(
-                            crossAxisAlignment: WrapCrossAlignment.center,
-                            alignment: WrapAlignment.end,
-                            children: <Widget>[
-                              Text(
-                                ': إختر الحالة جديد أم مستعمل ',
-                                textAlign: TextAlign.justify,
+                    Wrap(
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      alignment: WrapAlignment.end,
+                      children: <Widget>[
+                        Text(
+                          ': إختر الحالة جديد أم مستعمل ',
+                          textAlign: TextAlign.justify,
+                          style: TextStyle(
+                              fontSize: 12,
+                              fontFamily: 'Montserrat-Arabic Regular',
+                              height: 1.8),
+                        ),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        Column(
+                          children: <Widget>[
+                            CheckboxListTile(
+                              title: Text(
+                                'جديد',
+                                textAlign: TextAlign.right,
                                 style: TextStyle(
-                                    fontSize: 18,
+                                    fontSize: 13,
                                     fontFamily: 'Montserrat-Arabic Regular',
-                                    height: 1.8),
+                                    height: 0.5),
                               ),
-                              SizedBox(
-                                width: 10,
+                              controlAffinity: ListTileControlAffinity.trailing,
+                              value: chacked,
+                              onChanged: (value) {
+                                setState(() {
+                                  chacked = value;
+                                  chacked2 = false;
+                                  status = 'جديد';
+                                });
+                              },
+                            ),
+                            CheckboxListTile(
+                              title: Text(
+                                'مستعمل',
+                                textAlign: TextAlign.right,
+                                style: TextStyle(
+                                    fontSize: 13,
+                                    fontFamily: 'Montserrat-Arabic Regular',
+                                    height: 0.5),
                               ),
-                              Column(
-                                children: <Widget>[
-                                  CheckboxListTile(
-                                    title: Text(
-                                      'جديد',
-                                      textAlign: TextAlign.right,
-                                      style: TextStyle(
-                                          fontSize: 19,
-                                          fontFamily:
-                                              'Montserrat-Arabic Regular',
-                                          height: 0.5),
-                                    ),
-                                    controlAffinity:
-                                        ListTileControlAffinity.trailing,
-                                    value: chacked,
-                                    onChanged: (value) {
-                                      setState(() {
-                                        chacked = value;
-                                        chacked2 = false;
-                                        status = 'جديد';
-
-                                      });
-                                    },
-                                  ),
-                                  CheckboxListTile(
-                                    title: Text(
-                                      'مستعمل',
-                                      textAlign: TextAlign.right,
-                                      style: TextStyle(
-                                          fontSize: 19,
-                                          fontFamily:
-                                              'Montserrat-Arabic Regular',
-                                          height: 0.5),
-                                    ),
-                                    controlAffinity:
-                                        ListTileControlAffinity.trailing,
-                                    value: chacked2,
-                                    onChanged: (value) {
-                                      setState(() {
-                                        chacked2 = value;
-                                        chacked = false;
-                                        status = 'مستعمل';
-
-                                      });
-                                    },
-                                  )
-                                ],
-                              )
-                            ],
-                          )
-                        : Container(),
+                              controlAffinity: ListTileControlAffinity.trailing,
+                              value: chacked2,
+                              onChanged: (value) {
+                                setState(() {
+                                  chacked2 = value;
+                                  chacked = false;
+                                  status = 'مستعمل';
+                                });
+                              },
+                            )
+                          ],
+                        )
+                      ],
+                    ),
                     Padding(
                       padding: EdgeInsets.only(top: 0),
                       child: Container(
@@ -1069,10 +1108,10 @@ class _AddNewAdState extends State<AddNewAd> {
                                     Icons.menu,
                                     size: 26,
                                   )),
-                              onChanged: (String theDate) {
+                              onChanged: (String theArea) {
                                 setState(() {
-                                  dropSelectItemArea = theDate;
-                                  area = theDate;
+                                  dropSelectItemArea = theArea;
+                                  area2 = theArea;
                                   showAreaTextField = true;
                                 });
                               },
@@ -1083,13 +1122,13 @@ class _AddNewAdState extends State<AddNewAd> {
                               'إختر المحافظة ثم أدخل منطقتك',
                               textAlign: TextAlign.center,
                               style: TextStyle(
-                                  fontSize: 16,
+                                  fontSize: 12,
                                   fontFamily: 'Montserrat-Arabic Regular',
                                   height: 1),
                             ),
                             showAreaTextField
                                 ? SizedBox(
-                                    height: 52,
+                                    height: 54,
                                     width: 200,
                                     child: TextFormField(
                                       controller: areaController,
@@ -1099,17 +1138,15 @@ class _AddNewAdState extends State<AddNewAd> {
                                         }
                                         return null;
                                       },
-                                      onSaved: (val) {
-                                        _editedProduct = Product(
-                                          area: area,
-                                        );
+                                      onSaved: (val){
+                                        area = '$area2 - $val';
                                       },
                                       maxLength: 30,
                                       textAlign: TextAlign.right,
                                       decoration: InputDecoration(
                                         hintText: '... أدخل منطقتك هنا',
                                         hintStyle:
-                                            TextStyle(fontSize: 15, height: 1),
+                                            TextStyle(fontSize: 12, height: 1),
                                         enabledBorder: OutlineInputBorder(
                                           borderSide: BorderSide(
                                               color: Colors.blueAccent),
@@ -1176,7 +1213,7 @@ class _AddNewAdState extends State<AddNewAd> {
                                   return null;
                                 },
                                 onSaved: (val) {
-                                  price = double.parse(val) ;
+                                  price = double.parse(val);
                                 },
                                 keyboardType: TextInputType.numberWithOptions(
                                     decimal: true),
@@ -1193,14 +1230,11 @@ class _AddNewAdState extends State<AddNewAd> {
                                   ),
                                   hintText:
                                       '!... أدخل السعر المطلوب ,ارقام انجليزية',
-                                  hintStyle: TextStyle(fontSize: 14, height: 1),
+                                  hintStyle: TextStyle(fontSize: 12, height: 1),
                                   fillColor: Colors.white,
                                   hoverColor: Colors.white,
                                 ),
                                 cursorRadius: Radius.circular(10),
-                                onChanged: (val) {
-                                  priceText = val;
-                                },
                               ),
                             ),
                           ),
@@ -1246,7 +1280,7 @@ class _AddNewAdState extends State<AddNewAd> {
                                   return null;
                                 },
                                 onSaved: (val) {
-                                  phone = int.parse(val) ;
+                                  phone = int.parse(val);
                                 },
                                 textAlign: TextAlign.right,
                                 keyboardType: TextInputType.numberWithOptions(
@@ -1263,7 +1297,7 @@ class _AddNewAdState extends State<AddNewAd> {
                                   ),
                                   hintText:
                                       '!... أدخل رقم جوالك, ارقام انجليزية',
-                                  hintStyle: TextStyle(fontSize: 14, height: 1),
+                                  hintStyle: TextStyle(fontSize: 12, height: 1),
                                   fillColor: Colors.white,
                                   hoverColor: Colors.white,
                                 ),
@@ -1308,15 +1342,15 @@ class _AddNewAdState extends State<AddNewAd> {
                                       _formkey.currentState.validate();
                                   _formkey.currentState.save();
                                   FocusScope.of(context).unfocus();
-                                  price = double.parse(priceText);
                                   _editedProduct = Product(
-                                    time: DateFormat('yyyy-MM-dd-HH:mm').format(DateTime.now()),
+                                    time: DateFormat('yyyy-MM-dd-HH:mm')
+                                        .format(DateTime.now()),
                                     creatorName: creatorName,
                                     id: '',
                                     name: name,
                                     description: description,
                                     price: price,
-                                    area: '$area- ${areaController.text}',
+                                    area: area,
                                     phone: phone,
                                     status: status,
                                     deviceNo: deviceNo,
@@ -1326,15 +1360,19 @@ class _AddNewAdState extends State<AddNewAd> {
                                     imagesUrl: urlImages,
                                     isFavorite: false,
                                     isRequest: false,
-                                    views: 0,
-                                    likes:0,
+                                    views: views,
+                                    likes: likes,
                                   );
+
                                   if (urlImages.length > 1) {
-                                    if (id != null) {
+                                    if (widget.isEdit) {
+                                      print(widget.id);
                                       try {
+                                        print(_editedProduct.area);
                                         await Provider.of<Products>(context,
                                                 listen: false)
-                                            .updateProduct(id, _editedProduct);
+                                            .updateProduct(
+                                                widget.id, _editedProduct);
                                         Navigator.of(context).pop();
                                       } catch (e) {
                                         await showDialog(
@@ -1355,12 +1393,11 @@ class _AddNewAdState extends State<AddNewAd> {
                                                 ));
                                       }
                                     } else {
-                                      price = double.parse(priceText);
                                       try {
                                         await Provider.of<Products>(context,
                                                 listen: false)
                                             .addProduct(_editedProduct);
-                                        Navigator.of(context).pop();
+                                        // Navigator.of(context).pop();
                                       } catch (e) {
                                         await showDialog(
                                             context: context,
@@ -1384,13 +1421,13 @@ class _AddNewAdState extends State<AddNewAd> {
                                     await showDialog(
                                         context: context,
                                         builder: (ctx) => AlertDialog(
-                                              title: Text('لا يوجد صورة'),
-                                              content: Text('اضف صورة رجاءاً'),
+                                              title: Text('لا يوجد صورة',style: Theme.of(context).textTheme.headline3,),
+                                              content: Text('اضف صورة رجاءاً',style: Theme.of(context).textTheme.headline3),
                                               actions: [
                                                 TextButton(
                                                   onPressed: () =>
                                                       Navigator.of(ctx).pop(),
-                                                  child: Text('Okay!'),
+                                                  child: Text('Okay !',style: Theme.of(context).textTheme.headline3),
                                                 )
                                               ],
                                             ));
@@ -1402,7 +1439,7 @@ class _AddNewAdState extends State<AddNewAd> {
                                     child: Text('انشر إعلانك',
                                         textAlign: TextAlign.center,
                                         style: TextStyle(
-                                            fontSize: 21,
+                                            fontSize: 18,
                                             fontFamily:
                                                 'Montserrat-Arabic Regular',
                                             height: 1,

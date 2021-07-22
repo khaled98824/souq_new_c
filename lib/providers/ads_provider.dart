@@ -12,8 +12,11 @@ class Products with ChangeNotifier {
   List<Product> _items = [];
   List<DocumentSnapshot> newItems = [];
   List<DocumentSnapshot> myAds = [];
+  List<DocumentSnapshot> requests = [];
   List<DocumentSnapshot> itemsCategory = [];
   late int itemsCategoryCount;
+  late int itemsRequestsCount;
+
 
   List<Product> allItems = [];
 
@@ -147,9 +150,9 @@ class Products with ChangeNotifier {
   Future<void> updateProduct(String id, Product newProduct) async {
     final prodIndex = _items.indexWhere((prod) => prod.id == id);
 
-    if (prodIndex >= 0) {
+    print(newProduct.department);
       //update by firestor
-      Firestore.instance.collection('Ads2').document(id).updateData({
+      Firestore.instance.collection('Ads2').document(id).setData({
         'date': newProduct.time,
         'updateDate': DateFormat('yyyy-MM-dd-HH:mm').format(DateTime.now()),
         'name': newProduct.name,
@@ -195,19 +198,19 @@ class Products with ChangeNotifier {
       //       'likes': newProduct.likes,
       //     }));
 
-      _items[prodIndex] = newProduct;
+      //_items[prodIndex] = newProduct;
       notifyListeners();
-    } else {}
+
   }
 
-  Future<void> updateLikes(String id, likes, index) async {
+  Future<void> updateLikes(String id, likes, index,String txt) async {
     if (id.length >= 0) {
       //update like by firestore
       Firestore.instance.collection('Ads2').document(id).updateData({
         'likes': likes + 1,
       });
       newItems[index].data['likes'] = newItems[index].data['likes'] + 1;
-
+      if(txt =='request')requests[index].data['likes'] = requests[index].data['likes'] + 1;
       //update like by api
       // final url = 'https://souq-alfurat-89023.firebaseio.com/products/$id.json';
       // await http.patch(Uri.parse(url),
@@ -220,13 +223,14 @@ class Products with ChangeNotifier {
     } else {}
   }
 
-  Future<void> updateViews(String id, views, index) async {
+  Future<void> updateViews(String id, views, index , String txt) async {
     if (id.length >= 0) {
       //update like by firestore
       Firestore.instance.collection('Ads2').document(id).updateData({
         'views': views + 1,
       });
       newItems[index].data['views'] = newItems[index].data['views'] + 1;
+      if(txt =='request')requests[index].data['views'] = requests[index].data['views'] + 1;
 
       //update like by api
       // final url = 'https://souq-alfurat-89023.firebaseio.com/products/$id.json';
@@ -323,6 +327,25 @@ class Products with ChangeNotifier {
       throw e;
     }
   }
+
+  //fetch requests
+  Future<void> fetchRequests() async {
+    try {
+      QuerySnapshot querySnapshot = await Firestore.instance
+          .collection("Ads2")
+          .where('isRequest', isEqualTo: true)
+          .getDocuments();
+      final List<DocumentSnapshot> snap = querySnapshot.documents.toList();
+      itemsCategory = snap;
+      print(itemsCategory.length);
+      itemsRequestsCount = itemsCategory.length;
+      requests = snap;
+      notifyListeners();
+    } catch (e) {
+      throw e;
+    }
+  }
+
 
   //fetch my ads
 
