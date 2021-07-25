@@ -21,6 +21,7 @@ class Auth with ChangeNotifier {
   Timer _authTimer;
   String uid2 ;
   String nameUser;
+  String emailUser;
   String areaUser;
   String dateUser;
   String imageUserUrl;
@@ -57,7 +58,7 @@ class Auth with ChangeNotifier {
         throw HttpException(responseData['error']['message']);
       }
       uid2=_userId;
-
+      emailUser = email;
       _token = responseData['idToken'];
       _userId = responseData['localId'];
       _expiryDate = DateTime.now()
@@ -84,6 +85,8 @@ class Auth with ChangeNotifier {
         'expiryDate': _expiryDate.toIso8601String(),
       });
       prefs.setString('userData', userData);
+
+      // save user info firestore
         if(signUp)Firestore.instance.collection('users').document(_userId)
             .setData({
           'token':_token,
@@ -96,6 +99,12 @@ class Auth with ChangeNotifier {
               .format(DateTime.now()),
           'imageUrl': imageUrl,
         });
+
+        //update token
+      if(!signUp)Firestore.instance.collection('users').document(_userId)
+          .updateData({
+        'token':_token,
+      });
 
     } catch (e) {
       throw e;
@@ -111,6 +120,7 @@ class Auth with ChangeNotifier {
     return _authenticate(email, password, 'signInWithPassword','','',false);
   }
 
+  //get user info
   Future gitCurrentUserInfo()async{
     DocumentSnapshot documentsUser;
     DocumentReference documentRef =
@@ -123,6 +133,17 @@ class Auth with ChangeNotifier {
     notifyListeners();
     return documentsUser;
   }
+
+  //update user info
+  Future updateUserInfo(name,area)async{
+   await Firestore.instance.collection('users').document(_userId)
+        .updateData({
+     'name': name,
+     'area': area,
+    });
+    notifyListeners();
+  }
+
 
   Future<bool> tryAutoLogin() async {
     final prefs = await SharedPreferences.getInstance();

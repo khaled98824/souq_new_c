@@ -2,8 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
-import 'package:souqalfurat/providers/ads_provider.dart';
-import 'package:souqalfurat/widgets/ads_items_category.dart';
+import '../providers/ads_provider.dart';
+import '../widgets/new_Ads.dart';
 
 class Requests extends StatefulWidget {
   static const routeName = "/requests";
@@ -38,7 +38,7 @@ class _RequestsState extends State<Requests> {
                                 'https://firebasestorage.googleapis.com/v0/b/souq-alfurat-89023.appspot.com/o/WhatsApp%20Image%202020-09-15%20at%2011.23.35%20AM.jpeg?alt=media&token=a7c3f2d7-2629-4519-9c61-93444f989688',
                                 fit: BoxFit.cover,
                               ),
-                              title: Text('Requests',style: Theme.of(context).textTheme.headline4,),
+                              title: Text('الطلبات',style: Theme.of(context).textTheme.headline4,),
                               centerTitle: true,
                             ),
                             //title: Text('My App Bar'),
@@ -100,7 +100,7 @@ class RequestsItems extends StatelessWidget {
                 return Center(child: Text('Some error occurred!'));
               } else {
                 return Consumer<Products>(
-                  builder: (context, data, _) => CategoryAdsItemsCard(
+                  builder: (context, data, _) => NewAdsCard(
                     image: data.requests[index]['imagesUrl'][1],
                     title: data.requests[index]['name'],
                     country: data.requests[index]['area'],

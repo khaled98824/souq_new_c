@@ -2,6 +2,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:souqalfurat/providers/auth.dart';
 import 'package:souqalfurat/providers/chats_provider.dart';
@@ -24,6 +25,7 @@ class _NewMessageState extends State<NewMessage> {
   String _enteredMessage = '';
 
   _sendMessage(userId,adId) async {
+    _sendNotification();
     FocusScope.of(context).unfocus();
     //final user = FirebaseAuth.instance.currentUser;
     final userData = await Firestore.instance
@@ -51,20 +53,45 @@ class _NewMessageState extends State<NewMessage> {
     if(widget.isPrivate && chatId.isNotEmpty){
      chatName = chatId;
     }else if(widget.isPrivate){
-      print('adId ${widget.adId}');
-      print('userId from messages $userIdA');
-      print('crId ${widget.creatorId}');
-      print('isP ${widget.isPrivate}');
-
       chatName = userIdA.toString()+widget.adId+widget.creatorId;
       print('chatName $chatName');
     }else{
       chatName=widget.adId;
     }
   }
+
+  //send notification
+  _sendNotification() {
+    OneSignal.shared.postNotification(OSCreateNotification(
+      additionalData: {
+        'data': 'this is our data',
+      },
+      subtitle: 'Flutter in depth',
+      playerIds: [osUserID],
+      content: 'New series lessons from Code With Ammar',
+    ));
+  }
+  //get id to send
+  String osUserID;
+  String name;
+
+  Future gitUserInfo()async{
+    DocumentSnapshot documentsUser;
+    DocumentReference documentRef =
+    Firestore.instance.collection('users').document(widget.creatorId);
+    documentsUser = await documentRef.get();
+    name = documentsUser['name'];
+    osUserID =documentsUser['osUserID'];
+    return documentsUser;
+  }
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    gitUserInfo();
+  }
   @override
   Widget build(BuildContext context) {
-
     final userIdG= Provider.of<Auth>(context).userId;
     privateOrG(userIdG,widget.chatId);
 

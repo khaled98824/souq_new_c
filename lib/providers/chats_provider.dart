@@ -16,7 +16,7 @@ class ChatsProvider with ChangeNotifier {
         await Firestore.instance.collection("private_chats").getDocuments();
     final List<DocumentSnapshot> snap = querySnapshot.documents
         .where((DocumentSnapshot documentSnapshot) =>
-            documentSnapshot['adId'] == adId ||
+            documentSnapshot['adId'] == adId &&
             documentSnapshot['creatorChatId'] == userId)
         .toList();
     if (snap.isNotEmpty) {

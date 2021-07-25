@@ -340,7 +340,9 @@ class _AddNewAdState extends State<AddNewAd> {
         'isRequest': oldData['isRequest'],
         'views': oldData['views'],
         'likes': oldData['likes'],
-        'creatorId': oldData['creatorId']
+        'creatorId': oldData['creatorId'],
+        'creatorName': oldData['creatorName']
+
       };
       //urlImages = oldData['imagesUrl'];
       category = oldData['category'];
@@ -1348,6 +1350,7 @@ class _AddNewAdState extends State<AddNewAd> {
                                     creatorName: creatorName,
                                     id: '',
                                     name: name,
+                                    creatorId:userId ,
                                     description: description,
                                     price: price,
                                     area: area,
@@ -1397,7 +1400,7 @@ class _AddNewAdState extends State<AddNewAd> {
                                         await Provider.of<Products>(context,
                                                 listen: false)
                                             .addProduct(_editedProduct);
-                                        // Navigator.of(context).pop();
+                                         Navigator.of(context).pop();
                                       } catch (e) {
                                         await showDialog(
                                             context: context,

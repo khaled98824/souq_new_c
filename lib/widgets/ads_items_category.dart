@@ -48,7 +48,7 @@ class CategoryAdsItemsCard extends StatelessWidget {
         children: <Widget>[
           GestureDetector(
               onTap: () {
-                Provider.of<Products>(context, listen: false).updateViews(id, views, index,'request');
+                Provider.of<Products>(context, listen: false).updateViews(id, views, index,kindLike);
                 Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -88,7 +88,7 @@ class CategoryAdsItemsCard extends StatelessWidget {
                   InkWell(
                     onTap: () {
                       Provider.of<Products>(context, listen: false)
-                          .updateViews(id, views, index,'request');
+                          .updateViews(id, views, index,'category');
                       Navigator.push(
                           context,
                           MaterialPageRoute(

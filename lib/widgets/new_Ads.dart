@@ -151,7 +151,7 @@ class NewAdsCard extends StatelessWidget {
                   InkWell(
                     onTap: () {
                       Provider.of<Products>(context, listen: false)
-                          .updateViews(id, views, index,'');
+                          .updateViews(id, views, index,'request');
                       Navigator.push(
                           context,
                           MaterialPageRoute(

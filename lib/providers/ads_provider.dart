@@ -156,15 +156,16 @@ class Products with ChangeNotifier {
         'date': newProduct.time,
         'updateDate': DateFormat('yyyy-MM-dd-HH:mm').format(DateTime.now()),
         'name': newProduct.name,
+        'creatorName': newProduct.creatorName,
         'description': newProduct.description,
         'price': newProduct.price,
-        'creatorId': userId,
+
         'area': newProduct.area,
         'phone': newProduct.phone,
         'status': newProduct.status,
         'deviceNo': newProduct.deviceNo,
         'category': newProduct.category,
-        'uid': newProduct.uid,
+
         'department': newProduct.department,
         'imagesUrl': newProduct.imagesUrl,
         'isFavorite': newProduct.isFavorite,
@@ -230,7 +231,11 @@ class Products with ChangeNotifier {
         'views': views + 1,
       });
       newItems[index].data['views'] = newItems[index].data['views'] + 1;
-      if(txt =='request')requests[index].data['views'] = requests[index].data['views'] + 1;
+      if(txt =='request'){
+        requests[index].data['views'] = requests[index].data['views'] + 1;
+      }else{
+
+      }
 
       //update like by api
       // final url = 'https://souq-alfurat-89023.firebaseio.com/products/$id.json';
@@ -244,23 +249,32 @@ class Products with ChangeNotifier {
     } else {}
   }
 
-  Future<void> deleteProduct(String id) async {
-    final url =
-        'https://shop-1d972-default-rtdb.asia-southeast1.firebasedatabase.app/products/$id.json?auth=$authToken';
-    final existingproductIndex = _items.indexWhere((prod) => prod.id == id);
-
-    Product? existingProduct = _items[existingproductIndex];
-    _items.removeAt(existingproductIndex);
-    notifyListeners();
-
-    final res = await http.delete(Uri.parse(url));
-
-    if (res.statusCode >= 400) {
-      _items.insert(existingproductIndex, existingProduct);
+  Future<void> deleteAd(String id) async {
+    try{
+      Firestore.instance.collection('Ads2').document(id).delete();
+      newItems.removeWhere((element) => element.documentID==id);
       notifyListeners();
-      throw HttpException('Could Not delete');
+    }catch(err){
+      throw err;
     }
-    existingProduct = null;
+
+
+    // //delete by api
+    // final url =
+    //     'https://shop-1d972-default-rtdb.asia-southeast1.firebasedatabase.app/products/$id.json?auth=$authToken';
+    // final existingproductIndex = _items.indexWhere((prod) => prod.id == id);
+    // Product? existingProduct = _items[existingproductIndex];
+    // _items.removeAt(existingproductIndex);
+    // notifyListeners();
+    //
+    // final res = await http.delete(Uri.parse(url));
+    //
+    // if (res.statusCode >= 400) {
+    //   _items.insert(existingproductIndex, existingProduct);
+    //   notifyListeners();
+    //   throw HttpException('Could Not delete');
+    // }
+    // existingProduct = null;
   }
 
   //get new Ads

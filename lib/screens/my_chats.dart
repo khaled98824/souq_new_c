@@ -34,8 +34,12 @@ class _MyChatsState extends State<MyChats> {
               if (data.connectionState == ConnectionState.waiting) {
                 return Center(child: CircularProgressIndicator());
               } else {
-                return ListView.builder(
+                return ListView.separated(
                     itemCount:Provider.of<ChatsProvider>(context, listen: false).listChats.length,
+                    separatorBuilder: (context, index) => Divider(
+                      thickness: 2,
+                      color: Colors.deepOrange,
+                    ),
                     itemBuilder: (context, index) => InkWell(
                           onTap: () {
                             Navigator.push(

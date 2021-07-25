@@ -48,6 +48,7 @@ dependencies:
   photo_gallery:
   carousel_slider:
   url_launcher:
+  onesignal_flutter: ^2.0.0
 
 
 

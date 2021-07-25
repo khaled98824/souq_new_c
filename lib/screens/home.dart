@@ -1,22 +1,20 @@
 // @dart=2.9
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:souqalfurat/providers/ads_provider.dart';
 import 'package:souqalfurat/providers/auth.dart';
 import 'package:souqalfurat/providers/full_provider.dart';
-import 'package:souqalfurat/screens/add_new_ad.dart';
-import 'package:souqalfurat/screens/my_Ads.dart';
-import 'package:souqalfurat/screens/my_chats.dart';
-import 'package:souqalfurat/screens/profile_screen.dart';
 import 'package:souqalfurat/screens/requests.dart';
+import 'package:souqalfurat/widgets/bottomNavBar.dart';
 import 'package:souqalfurat/widgets/head.dart';
 import 'package:souqalfurat/widgets/new_Ads.dart';
 import 'package:souqalfurat/widgets/searchArea.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'ads_of_category.dart';
 import 'constants.dart';
 
@@ -60,17 +58,42 @@ class _HomeScreenState extends State<HomeScreen> {
     adImagesUrlF = documentsAds.data['urls'];
     return adImagesUrlF;
   }
-
+  String subtitle = '';
+  String content = '';
+  String data = '';
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     controller = ScrollController();
     controller.addListener(listenBottom);
-    setState(() {
-      _currentIndex = 4;
-    });
     Provider.of<Auth>(context, listen: false).gitCurrentUserInfo();
+
+    //noti
+    OneSignal.shared
+        .setNotificationReceivedHandler((OSNotification notification) {
+      setState(() {
+        subtitle = notification.payload.subtitle;
+        content = notification.payload.body;
+        data = notification.payload.additionalData['data'];
+        print(subtitle);
+      });
+    });
+
+    OneSignal.shared
+        .setNotificationOpenedHandler((OSNotificationOpenedResult result) {
+      print('Notification Opened');
+    });
+
+    OneSignal.shared.getPermissionSubscriptionState().then((state) {
+      DocumentReference ref = Firestore.instance
+          .collection('users')
+          .document(Provider.of<Auth>(context,listen: false).userId);
+
+      ref.updateData({
+        'osUserID': '${state.subscriptionStatus.userId}',
+      });
+    });
   }
 
   @override
@@ -428,76 +451,10 @@ class _HomeScreenState extends State<HomeScreen> {
       bottomNavigationBar: AnimatedContainer(
           duration: Duration(milliseconds: 500),
           height: bottomIsVisible ? 66 : 0,
-          child: Wrap(
-            children: [
-              BottomNavigationBar(
-                unselectedIconTheme: IconThemeData(color: Colors.grey[400]),
-                selectedIconTheme: IconThemeData(color: Colors.black),
-                unselectedLabelStyle: TextStyle(
-                    color: Colors.grey[400],
-                    fontFamily: 'Montserrat-Arabic Regular'),
-                selectedLabelStyle: TextStyle(
-                    color: Colors.black,
-                    fontFamily: 'Montserrat-Arabic Regular'),
-                fixedColor: Colors.green,
-                type: BottomNavigationBarType.fixed,
-                onTap: onTapped,
-                currentIndex: _currentIndex,
-                items: [
-                  BottomNavigationBarItem(
-                    icon: Icon(FontAwesomeIcons.userTie),
-                    label: 'حسابي',
-                  ),
-                  BottomNavigationBarItem(
-                      icon: Icon(FontAwesomeIcons.images), label: 'إعلاناتي'),
-                  BottomNavigationBarItem(
-                      icon: Icon(
-                        Icons.add_a_photo_outlined,
-                        size: 35,
-                        color: Colors.orange,
-                      ),
-                      label: 'أضف إعلان'),
-                  BottomNavigationBarItem(
-                    icon: Icon(FontAwesomeIcons.comments),
-                    label: 'محادثاتي',
-                  ),
-                  BottomNavigationBarItem(
-                      icon: Icon(FontAwesomeIcons.home), label: 'الرئيسية'),
-                ],
-              ),
-            ],
-          )),
+          child: BottomNavB())
     );
   }
 
-  void onTapped(int index) {
-    setState(() {
-      _currentIndex = index;
-    });
-    if (_currentIndex == 4) {
-      Navigator.pushNamed(context, HomeScreen.routeName);
-      print(index);
-    } else if (_currentIndex == 3) {
-      print(index);
-
-      Navigator.pushNamed(context, MyChats.routeName);
-    } else if (_currentIndex == 2) {
-      Navigator.push(context,
-          MaterialPageRoute(builder: (ctx) => AddNewAd(context, null,false)));
-      print(index);
-    } else if (_currentIndex == 1) {
-      Navigator.pushNamed(context, MyAds.routeName);
-      print(index);
-    } else if (_currentIndex == 0) {
-      print(index);
-
-      Navigator.pushNamed(context, Profile.routeName);
-    }
-  }
-
-  int _currentIndex = 4;
-
-//sliver
 
 }
 

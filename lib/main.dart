@@ -1,12 +1,16 @@
 // @dart=2.9
 
 import 'package:flutter/material.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:souqalfurat/providers/ads_provider.dart';
 import 'package:souqalfurat/providers/chats_provider.dart';
 import 'package:souqalfurat/providers/full_provider.dart';
+import 'package:souqalfurat/screens/about_us.dart';
 import 'package:souqalfurat/screens/add_new_ad.dart';
+import 'package:souqalfurat/screens/add_suggestion.dart';
 import 'package:souqalfurat/screens/ads_of_category.dart';
+import 'package:souqalfurat/screens/contact.dart';
 import 'package:souqalfurat/screens/edit_account.dart';
 import 'package:souqalfurat/screens/home.dart';
 import 'package:souqalfurat/screens/my_chats.dart';
@@ -18,8 +22,20 @@ import 'providers/auth.dart';
 import 'screens/auth_screen.dart';
 import 'screens/my_Ads.dart';
 import 'screens/show_ad.dart';
+import 'package:firebase_core/firebase_core.dart';
+//f1bfbfe8-ce68-4a1c-b992-dd653884f08a
+void main()async {
+  WidgetsFlutterBinding.ensureInitialized();
+  //await Firebase.initializeApp();
 
-void main() {
+  OneSignal.shared.init('f1bfbfe8-ce68-4a1c-b992-dd653884f08a', iOSSettings: {
+    OSiOSSettings.autoPrompt: false,
+    OSiOSSettings.inAppLaunchUrl: false
+  });
+  OneSignal.shared
+      .setInFocusDisplayType(OSNotificationDisplayType.notification);
+  await OneSignal.shared
+      .promptUserForPushNotificationPermission(fallbackToSettings: true);
   runApp(MyApp());
 }
 
@@ -59,6 +75,9 @@ class MyApp extends StatelessWidget {
                   headline4: TextStyle(
                       fontFamily: 'Montserrat-Arabic Regular',
                       fontSize: 16,
+                      wordSpacing: 1,
+                      letterSpacing: 1,
+                      height: 1.4,
                       color: Colors.white),
                   headline3: TextStyle(
                     fontFamily: 'Montserrat-Arabic Regular',
@@ -82,6 +101,12 @@ class MyApp extends StatelessWidget {
             EditUserInfo.routeName: (_) => EditUserInfo(),
             AdsOfCategory.routeName:(_)=>AdsOfCategory(''),
             Requests.routeName: (_) => Requests(),
+            ComplaintsAndSuggestions.routeName: (_) => ComplaintsAndSuggestions(),
+            Contact.routeName: (_) => Contact(),
+            AboutUs.routeName: (_) => AboutUs(),
+
+
+
 
           },
           home: auth.isAuth
