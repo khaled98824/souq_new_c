@@ -15,7 +15,13 @@ class NewMessage extends StatefulWidget {
   final bool isPrivate;
   final String chatId;
 
-   NewMessage(this.adId,this.isPrivate,this.userId,this.creatorId,this.adName,this.chatId);
+   NewMessage(
+       {this.adId,
+      this.isPrivate,
+      this.userId,
+      this.creatorId,
+      this.adName,
+      this.chatId});
   @override
   _NewMessageState createState() => _NewMessageState();
 }
@@ -23,7 +29,7 @@ class NewMessage extends StatefulWidget {
 class _NewMessageState extends State<NewMessage> {
   final _controller = TextEditingController();
   String _enteredMessage = '';
-
+  String userName;
   _sendMessage(userId,adId) async {
     _sendNotification();
     FocusScope.of(context).unfocus();
@@ -66,9 +72,10 @@ class _NewMessageState extends State<NewMessage> {
       additionalData: {
         'data': 'this is our data',
       },
-      subtitle: 'Flutter in depth',
+      subtitle: 'سوق الفرات',
+
       playerIds: [osUserID],
-      content: 'New series lessons from Code With Ammar',
+      content: 'قام $userName بالتعليق على إعلانك ${widget.adName} ',
     ));
   }
   //get id to send
@@ -92,6 +99,7 @@ class _NewMessageState extends State<NewMessage> {
   }
   @override
   Widget build(BuildContext context) {
+    final userName= Provider.of<Auth>(context).nameUser;
     final userIdG= Provider.of<Auth>(context).userId;
     privateOrG(userIdG,widget.chatId);
 

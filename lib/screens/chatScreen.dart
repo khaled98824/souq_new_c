@@ -20,7 +20,9 @@ class ChatScreen extends StatefulWidget {
   final String chatId;
 
 
-  const ChatScreen( this.adId,this.isPrivate,this.userId,this.creatorId,this.adName,this.chatId) ;
+  const ChatScreen(this.adId, this.isPrivate, this.userId, this.creatorId,
+      this.adName, this.chatId);
+
   @override
   _ChatScreenState createState() => _ChatScreenState();
 }
@@ -30,12 +32,6 @@ class _ChatScreenState extends State<ChatScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    print(widget.adName);
-    print(widget.userId);
-    print(widget.creatorId);
-    print(widget.adId);
-    print(widget.isPrivate);
-
     // final fbm = FirebaseMessaging();
     // fbm.requestNotificationPermissions();
     // fbm.configure(
@@ -57,43 +53,52 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: AppBar(
         title: Text('Chat Screen'),
         actions: [
           DropdownButton(
             underline: Container(),
-              icon: Icon(
-                Icons.more_vert,
-                color: Theme.of(context).primaryIconTheme.color,
-              ),
-              items: [
-                DropdownMenuItem(
-                  child: Row(
-                    children: [
-                      Icon(Icons.exit_to_app),
-                      SizedBox(
-                        width: 7,
-                      ),
-                      Text('Log Out'),
-                    ],
-                  ),
-                  value: 'logout',
+            icon: Icon(
+              Icons.more_vert,
+              color: Theme
+                  .of(context)
+                  .primaryIconTheme
+                  .color,
+            ),
+            items: [
+              DropdownMenuItem(
+                child: Row(
+                  children: [
+                    Icon(Icons.exit_to_app),
+                    SizedBox(
+                      width: 7,
+                    ),
+                    Text('Log Out'),
+                  ],
                 ),
-              ],
-          onChanged: (itemId){
-                if(itemId=='logout'){
-                  FirebaseAuth.instance.signOut();
-                }
-          },),
+                value: 'logout',
+              ),
+            ],
+            onChanged: (itemId) {
+              if (itemId == 'logout') {
+                FirebaseAuth.instance.signOut();
+              }
+            },),
         ],
       ),
-      body:Container(
+      body: Container(
         child: Column(
           children: [
-            Expanded(child: Messages(widget.adId,widget.isPrivate,widget.userId,widget.creatorId,widget.chatId)),
-            NewMessage(widget.adId,widget.isPrivate,widget.userId,widget.creatorId,widget.adName,widget.chatId),
+            Expanded(child: Messages(
+                widget.adId, widget.isPrivate, widget.userId, widget.creatorId,
+                widget.chatId)),
+            NewMessage(adId: widget.adId,
+                isPrivate: widget.isPrivate,
+                userId: widget.userId,
+                creatorId: widget.creatorId,
+                adName: widget.adName,
+                chatId: widget.chatId),
           ],
         ),
       ),

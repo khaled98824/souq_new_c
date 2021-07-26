@@ -41,6 +41,6 @@ post_install do |installer|
 end
 
 target ‘OneSignalNotificationServiceExtension’ do
-#use_frameworks!
+use_frameworks!
 pod ‘OneSignal’, ‘>= 2.9.3’, ‘< 3.0’
 end

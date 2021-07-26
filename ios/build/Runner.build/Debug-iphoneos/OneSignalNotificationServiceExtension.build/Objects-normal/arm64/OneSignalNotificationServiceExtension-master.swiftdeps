@@ -1,0 +1,5 @@
+version: "Apple Swift version 5.3.2 (swiftlang-1200.0.45 clang-1200.0.32.28)"
+options: "05501e9b315adea48c0d4ea81efd691b"
+build_time: [1627245850, 959036000]
+inputs:
+  "/Volumes/Untitled/Alsouq/New/souqalfurat/ios/OneSignalNotificationServiceExtension/NotificationService.swift": [1627160363, 315490825]
