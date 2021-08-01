@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'dart:io';
 import 'package:url_launcher/url_launcher.dart';
 
 class Contact extends StatefulWidget {
@@ -15,10 +17,7 @@ class _ContactState extends State<Contact> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text(
-          'تواصل معنا',
-          style: Theme.of(context).textTheme.headline4
-        ),
+        title: Text('تواصل معنا', style: Theme.of(context).textTheme.headline4),
       ),
       body: Container(
         child: Column(
@@ -104,8 +103,18 @@ class _ContactState extends State<Contact> {
                       borderRadius: BorderRadius.circular(4),
                       color: Colors.white),
                   child: InkWell(
-                    onTap: () {
-                      launch('tel:0096598824567');
+                    onTap: () async {
+                      late String url;
+                      if (Platform.isIOS) {
+                        url =
+                            'whatsapp://wa.me/0096598824567/?text=${Uri.parse('hi')}';
+                      } else if (Platform.isAndroid) {
+                        url = 'whatsapp://send?phone=0096598824567&text=Hello';
+                      }
+                      await canLaunch(url)
+                          ? launch(url)
+                          : ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text('تطبيق واتساب غير مثبت')));
                     },
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.center,

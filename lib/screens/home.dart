@@ -42,22 +42,23 @@ class _HomeScreenState extends State<HomeScreen> {
     'assets/images/requests.jpg'
   ];
 
-  var adImagesUrlF = [];
+  var adImagesUrlF = List<dynamic>();
   bool adsOrCategory = false;
   ScrollController controller;
   bool bottomIsVisible = true;
 
   getUrlsForAds() async {
     DocumentSnapshot documentsAds;
-    bool showSliderAds = false;
-
     DocumentReference documentRef = Firestore.instance
         .collection('UrlsForAds')
         .document('gocqpQlhow2tfetqlGpP');
     documentsAds = await documentRef.get();
     adImagesUrlF = documentsAds.data['urls'];
-    return adImagesUrlF;
+    setState(() {
+      showSliderAds = true;
+    });
   }
+  bool showSliderAds =false;
   String subtitle = '';
   String content = '';
   String data = '';
@@ -94,8 +95,8 @@ class _HomeScreenState extends State<HomeScreen> {
         'osUserID': '${state.subscriptionStatus.userId}',
       });
     });
+    getUrlsForAds();
   }
-
   @override
   void dispose() {
     // TODO: implement dispose
@@ -107,9 +108,9 @@ class _HomeScreenState extends State<HomeScreen> {
   void listenBottom() {
     //final direction = controller.position.userScrollDirection;
     if (controller.position.pixels >= 200) {
-      hideBottom();
+      //hideBottom();
     } else {
-      showBottom();
+      //showBottom();
     }
   }
 
@@ -126,7 +127,6 @@ class _HomeScreenState extends State<HomeScreen> {
     final screenSizeWidth = MediaQuery.of(context).size.width;
     final getAllData =
         Provider.of<Products>(context, listen: false).fetchNewAds(false);
-    final fullDataP = Provider.of<FullDataProvider>(context, listen: false);
     return Scaffold(
       backgroundColor: kBackgroundColor,
       body: SafeArea(
@@ -212,49 +212,43 @@ class _HomeScreenState extends State<HomeScreen> {
               SizedBox(
                 height: 6,
               ),
-              Consumer<FullDataProvider>(
-                  builder: (context, data, _) => FutureBuilder(
-                      future: fullDataP.getUrlsForAds(),
-                      builder: (context, data) =>
-                          data.connectionState == ConnectionState.waiting
-                              ? CircularProgressIndicator()
-                              : Container(
-                                  width: screenSizeWidth - 10,
-                                  height: 85,
-                                  child: new Swiper(
-                                    itemBuilder: (ctx, int index) {
-                                      return InkWell(
-                                        onTap: () {},
-                                        child: Hero(
-                                            tag: Text('imageAd'),
-                                            child: ClipRRect(
-                                                borderRadius:
-                                                    BorderRadius.circular(3),
-                                                child: Image.network(
-                                                  data.data[index],
-                                                  fit: BoxFit.fill,
-                                                  // height: 75,
-                                                  // width: 390,
-                                                ))),
-                                      );
-                                    },
-                                    scrollDirection: Axis.horizontal,
-                                    itemCount: fullDataP.adImagesUrlF.length,
-                                    itemWidth: screenSizeWidth - 10,
-                                    itemHeight: 99.0,
-                                    duration: 2000,
-                                    autoplayDelay: 13000,
-                                    autoplay: true,
-                                    // pagination: new SwiperPagination(
-                                    //   alignment: Alignment.centerRight,
-                                    // ),
-                                    control: new SwiperControl(
-                                      size: 18,
-                                    ),
-                                  ),
-                                ))),
+             showSliderAds ? Container(
+               width: screenSizeWidth - 10,
+               height: 85,
+               child: Swiper(
+                 itemBuilder: (ctx, int index) {
+                   return InkWell(
+                     onTap: () {},
+                     child: Hero(
+                         tag: Text('imageAd'),
+                         child: ClipRRect(
+                             borderRadius:
+                             BorderRadius.circular(3),
+                             child: Image.network(
+                               adImagesUrlF[index],
+                               fit: BoxFit.fill,
+                               // height: 75,
+                               // width: 390,
+                             ))),
+                   );
+                 },
+                 scrollDirection: Axis.horizontal,
+                 itemCount:adImagesUrlF.length,
+                 itemWidth: screenSizeWidth - 10,
+                 itemHeight: 99.0,
+                 duration: 2000,
+                 autoplayDelay: 13000,
+                 autoplay: true,
+                 // pagination: new SwiperPagination(
+                 //   alignment: Alignment.centerRight,
+                 // ),
+                 control: new SwiperControl(
+                   size: 18,
+                 ),
+               ),
+             ):CircularProgressIndicator(),
               SizedBox(
-                height: 10,
+                height: 6,
               ),
               adsOrCategory
                   ? Column(

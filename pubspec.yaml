@@ -49,12 +49,27 @@ dependencies:
   carousel_slider:
   url_launcher:
   onesignal_flutter: ^2.0.0
+  flutter_native_splash: ^1.2.0
+  google_sign_in:
 
 
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  flutter_launcher_icons: ^0.9.1
+flutter_icons:
+  image_path: "assets/images/logo-jpg512.jpg"
+  android: true
+  ios: true
+
+flutter_native_splash:
+  color: "#ffffff"
+  image: assets/images/alsouq-poster.jpg
+  android: true
+  ios: true
+  android_gravity: fill
+  ios_content_mode: scaleAspectFill
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

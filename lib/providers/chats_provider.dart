@@ -3,7 +3,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
-import 'package:souqalfurat/models/chats_model.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
 
 class ChatsProvider with ChangeNotifier {
   List<DocumentSnapshot> listChats;
@@ -36,8 +36,10 @@ class ChatsProvider with ChangeNotifier {
         'creatorChatName': userName,
         'creatorChatId': userId,
       });
+      getUserInfo(adName: adName, creatorId: creatorId,userName: userName);
     }
     notifyListeners();
+
     return snap;
   }
 
@@ -54,6 +56,33 @@ class ChatsProvider with ChangeNotifier {
     notifyListeners();
     return snap;
   }
-
   notifyListeners();
+
+  //send notification
+  _sendNotification(adName,userName) {
+    OneSignal.shared.postNotification(OSCreateNotification(
+      additionalData: {
+        'data': 'this is our data',
+      },
+      subtitle: 'سوق الفرات',
+
+      playerIds: [osUserID],
+      content: 'قام $userName بارسال رسالة خاصة لإعلان $adName ',
+    ));
+  }
+//get id to send
+  String osUserID;
+  String name;
+
+  Future getUserInfo({@required String adName, @required String creatorId,@required String userName,})async{
+    DocumentSnapshot documentsUser;
+    DocumentReference documentRef =
+    Firestore.instance.collection('users').document(creatorId);
+    documentsUser = await documentRef.get();
+    name = documentsUser['name'];
+    osUserID =documentsUser['osUserID'];
+    _sendNotification(adName,userName);
+    return documentsUser;
+  }
 }
+

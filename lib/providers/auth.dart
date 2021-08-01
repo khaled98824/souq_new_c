@@ -6,6 +6,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:intl/intl.dart';
 import 'package:souqalfurat/screens/auth_screen.dart';
 import '../models/http_exception.dart';
@@ -184,5 +185,37 @@ class Auth with ChangeNotifier {
 
     final timeToExpiry = _expiryDate.difference(DateTime.now()).inSeconds;
     _authTimer = Timer(Duration(seconds: timeToExpiry), loguot);
+  }
+
+  googleSignIn(){
+
+     GoogleSignInAccount userObj;
+     GoogleSignIn googleSignIn = GoogleSignIn();
+     googleSignIn.signIn().then((value)  {
+       userObj = value;
+
+       _userId=userObj.id;
+       uid2=userObj.id;
+       nameUser = userObj.displayName;
+       imageUserUrl = userObj.photoUrl;
+
+       Firestore.instance.collection('users').document(userObj.id)
+           .setData({
+         'token':userObj.id,
+         'name': userObj.displayName,
+         'user_uid': userObj.id,
+         'area': 'google',
+         'email':userObj.email,
+         'password': 'google',
+         "time": DateFormat('yyyy-MM-dd-HH:mm')
+             .format(DateTime.now()),
+         'imageUrl': userObj.photoUrl
+       });
+     }).catchError((err){
+       print(err);
+     });
+
+
+     notifyListeners();
   }
 }

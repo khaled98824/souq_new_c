@@ -1,0 +1,6 @@
+flutter_native_splash:
+
+  color: "#42a5f5"
+  fullscreen: true
+  background_image: assets/images/souq1624wpng.png
+

@@ -21,14 +21,14 @@ class SerchData extends SearchDelegate<String>{
   List<Widget> buildActions(BuildContext context) {
 
     // TODO: implement buildActions
-    return [IconButton(icon: Icon(Icons.clear),onPressed: (){query="";},)];
+    return [IconButton(icon: Icon(Icons.clear),color: Colors.red,onPressed: (){query="";},)];
   }
 
   @override
   Widget buildLeading(BuildContext context) {
     // TODO: implement buildLeading
     return IconButton(
-      icon: AnimatedIcon(icon: AnimatedIcons.menu_arrow, progress: transitionAnimation),
+      icon: AnimatedIcon(icon: AnimatedIcons.menu_arrow,color: Colors.green, progress: transitionAnimation),
       onPressed: (){close(context, null);},
     );
   }

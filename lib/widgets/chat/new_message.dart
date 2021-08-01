@@ -31,7 +31,8 @@ class _NewMessageState extends State<NewMessage> {
   String _enteredMessage = '';
   String userName;
   _sendMessage(userId,adId) async {
-    _sendNotification();
+    if(!widget.isPrivate && widget.creatorId!=userId){_sendNotification();}else{
+    }
     FocusScope.of(context).unfocus();
     //final user = FirebaseAuth.instance.currentUser;
     final userData = await Firestore.instance
@@ -75,7 +76,7 @@ class _NewMessageState extends State<NewMessage> {
       subtitle: 'سوق الفرات',
 
       playerIds: [osUserID],
-      content: 'قام $userName بالتعليق على إعلانك ${widget.adName} ',
+      content: 'قام $name بالتعليق على إعلانك ${widget.adName} ,${_controller.text}',
     ));
   }
   //get id to send
